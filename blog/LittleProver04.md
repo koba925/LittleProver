@@ -347,4 +347,34 @@ Test passed:5 failed:1 total:6
 
 きっと普通にやるぶんにはもうちょっと楽だと信じて進む
 
+あと、expectedをクォートしなくていいようにわざわざマクロ使って書いたテストですが
+actualの式にクォートがついてるのにexpectedについてないというのは逆に不自然な気がして
+やっぱりクォートを付けて書くことにしました
+それにともなってテストは普通の関数で書けるように
+
+```
+(define (my/test name actual expected)
+  (if (equal expected actual)
+      (set! my/test/passed (+ my/test/passed 1))
+      (begin
+        (display name)
+        (display "\nactual  :")
+        (display actual)
+        (display "\nexpected:")
+        (display expected)
+        (newline)
+        (set! my/test/failed (+ my/test/failed 1)))))
+```
+
 # 定理証明手習い (8) ●
+
+「2 もう少し、いつものゲームを」
+
+
+(my/test
+ "chapter2.example1"
+ (J-Bob/step (my/prelude)
+   '(if (car (cons a b)) c c)
+   '())
+ '(if a c c))
+

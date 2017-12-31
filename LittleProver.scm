@@ -11,28 +11,28 @@
    '(car (cons 'ham '(eggs)))
    '(((1) (cons 'ham '(eggs)))
      (() (car '(ham eggs)))))
- 'ham)
+ ''ham)
 
 (my/test
  "chapter1.example2"
  (J-Bob/step (my/prelude)
    '(atom '())
    '((() (atom '()))))
- 't)
+ ''t)
 
 (my/test
  "chapter1.example3"
  (J-Bob/step (my/prelude)
    '(atom (cons 'ham '(eggs)))
    '((() (atom/cons 'ham '(eggs)))))
- 'nil)
+ ''nil)
 
 (my/test
  "chapter1.example4"
  (J-Bob/step (my/prelude)
    '(atom (cons a b))
    '((() (atom/cons a b))))
- 'nil)
+ ''nil)
 
 (my/test
  "chapter1.example5"
@@ -40,7 +40,7 @@
    '(equal 'flapjack (atom (cons a b)))
    '(((2) (atom/cons a b))
      (() (equal 'flapjack 'nil))))
- 'nil)
+ ''nil)
 
 (my/test
  "chapter1.example6"
@@ -49,7 +49,7 @@
    '(((1 1 1) (car/cons p q))
      ((1) (cdr/cons p '()))
      (() (atom '()))))
- 't)
+ ''t)
 
 (my/test
  "chapter1.example7"
@@ -57,7 +57,7 @@
    '(atom (cdr (cons (car (cons p q)) '())))
    '(((1) (cdr/cons (car (cons p q)) '()))
      (() (atom '()))))
- 't)
+ ''t)
 
 (my/test
  "chapter1.example8"
@@ -66,21 +66,21 @@
    '(((1 1) (equal-same (cons x y)))
      ((1) (cons 't '(and crumpets)))
      (() (car '(t and crumpets)))))
- 't)
+ ''t)
 
 (my/test
  "chapter1.example9"
  (J-Bob/step (my/prelude)
    '(equal (cons x y) (cons 'bagels '(and lox)))
    '((() (equal-swap (cons x y) (cons 'bagels '(and lox))))))
- (equal (cons 'bagels '(and lox)) (cons x y)))
+ '(equal (cons 'bagels '(and lox)) (cons x y)))
 
 (my/test
  "chapter1.example10"
  (J-Bob/step (my/prelude)
    '(cons y (equal (car (cons (cdr x) (car y))) (equal (atom x) 'nil)))
    '(((2 1) (car/cons (cdr x) (car y)))))
- (cons y (equal (cdr x) (equal (atom x) 'nil))))
+ '(cons y (equal (cdr x) (equal (atom x) 'nil))))
 
 (my/test
  "chapter1.example11"
@@ -90,15 +90,15 @@
      ((2 2 2) (atom/cons (atom (cdr (cons a b))) (equal (cons a b) c)))
      ((2 2 2 1 1 1) (cdr/cons a b))
      ((2 2 2 1 2) (equal-swap (cons a b) c))))
- (cons y (equal (car (cons (car (cons (cdr x) (car y))) '(oats)))
-                (equal (atom x)
-                       (atom (cons (atom b) (equal c (cons a b))))))))
+ '(cons y (equal (car (cons (car (cons (cdr x) (car y))) '(oats)))
+                 (equal (atom x)
+                        (atom (cons (atom b) (equal c (cons a b))))))))
 
 (my/test
  "chapter1.example12"
  (J-Bob/step (my/prelude)
    '(atom (car (cons (car a) (cdr b))))
    '(((1) (car/cons (car a) (cdr b)))))
- (atom (car a)))
+ '(atom (car a)))
 
 (my/test/result)
