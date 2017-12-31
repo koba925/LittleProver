@@ -85,4 +85,13 @@
      (() (equal 'flapjack 'nil))))
  'nil)
 
+(my/test
+ "chapter1.example6"
+ (J-Bob/step (my/prelude)
+   '(atom (cdr (cons (car (cons p q)) '())))
+   '(((1 1 1) (car/cons p q))
+     ((1) (cdr/cons p '()))
+     (() (atom '()))))
+ 't)
+
 (my/test/result)

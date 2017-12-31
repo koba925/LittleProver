@@ -296,3 +296,23 @@ Test passed:2 failed:1 total:3
 ```
 
 十分
+新しい例が出たら最初はこんな風に追加しておいて
+
+```
+(my/test
+ "chapter1.example6"
+ (J-Bob/step (my/prelude)
+   '(atom (cdr (cons (car (cons p q)) '())))
+   '())
+ 't)
+```
+
+実行
+
+```
+chapter1.example6 actual:(atom (cdr (cons (car (cons p q)) '()))) expected:'t
+Test passed:5 failed:1 total:6
+```
+
+ここからひとつずつ置き換えを追加していって、テストが通ったら付録Bを見て答え合わせ
+パターンできた感じ
