@@ -70,4 +70,11 @@
    '((() (atom/cons a b))))
  'nil)
 
+(my/test
+ "chapter1.example4"
+ (J-Bob/step (my/prelude)
+   '(equal 'flapjack (atom (cons a b)))
+   '(((2) (atom/cons (atom (cons a b))))))
+ 'nil)
+
 (my/test/result)
