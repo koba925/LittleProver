@@ -1,54 +1,7 @@
 (load "j-bob/j-bob-lang.scm")
 (load "j-bob/j-bob.scm")
-
-;; 自分用テスト
-
-(define my/test/passed 0)
-(define my/test/failed 0)
-
-(define-syntax my/test
-  (syntax-rules ()
-    ((_ name actual expected)
-     (let ((act actual))
-       (if (equal (quote expected) actual)
-           (set! my/test/passed (+ my/test/passed 1))
-           (begin
-             (display name)
-             (display "\nactual  :")
-             (display act)
-             (display "\nexpected:")
-             (display (quote expected))
-             (newline)
-             (set! my/test/failed (+ my/test/failed 1))))))))
-
-(define (my/test/result)
-  (display "Test passed:")
-  (display my/test/passed)
-  (display " failed:")
-  (display my/test/failed)
-  (display " total:")
-  (display (+ my/test/passed my/test/failed))
-  (newline))
-
-;; 自分用prelude
-
-(defun my/axioms ()
-  '(; Consの公理（最初のバージョン）
-    (dethm atom/cons (x y)
-      (equal (atom (cons x y)) 'nil))
-    (dethm car/cons (x y)
-      (equal (car (cons x y)) x))
-    (dethm cdr/cons (x y)
-      (equal (cdr (cons x y)) y))
-    ; Equalの公理（最初のバージョン）
-    (dethm equal-same (x)
-      (equal (equal x x) 't))
-    (dethm equal-swap (x y)
-      (equal (equal x y) (equal y x)))))
-
-(defun my/prelude ()
-  (J-Bob/define (my/axioms)
-    '()))
+(load "mytest.scm")
+(load "myprelude.scm")
 
 ; 1 いつものゲームにルールを
 
