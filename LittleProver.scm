@@ -66,15 +66,23 @@
 (my/test
  "chapter1.example3"
  (J-Bob/step (my/prelude)
-   '(atom (cons a b))
-   '((() (atom/cons a b))))
+   '(atom (cons 'ham '(eggs)))
+   '((() (atom/cons 'ham '(eggs)))))
  'nil)
 
 (my/test
  "chapter1.example4"
  (J-Bob/step (my/prelude)
+   '(atom (cons a b))
+   '((() (atom/cons a b))))
+ 'nil)
+
+(my/test
+ "chapter1.example5"
+ (J-Bob/step (my/prelude)
    '(equal 'flapjack (atom (cons a b)))
-   '(((2) (atom/cons (atom (cons a b))))))
+   '(((2) (atom/cons a b))
+     (() (equal 'flapjack 'nil))))
  'nil)
 
 (my/test/result)

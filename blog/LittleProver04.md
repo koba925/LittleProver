@@ -234,16 +234,16 @@ j-bob.scmをチラ見して、からっぽのpreludeを作ってみる
 
 (define-syntax my/test
   (syntax-rules ()
-    ((_ name expected actual)
-     (let ((exp expected))
-       (if (equal exp (quote actual))
+    ((_ name actual expected)
+     (let ((act actual))
+       (if (equal (quote expected) actual)
            (set! my/test/passed (+ my/test/passed 1))
            (begin
              (display name)
-             (display " expected:")
-             (display exp)
              (display " actual:")
-             (display (quote actual))
+             (display act)
+             (display " expected:")
+             (display (quote expected))
              (newline)
              (set! my/test/failed (+ my/test/failed 1))))))))
 
@@ -291,7 +291,7 @@ Schemeって`display`並べるしかないんだっけ？
 実行するとこんな結果
 
 ```
-chapter1.example3 expected:'nil actual:'t
+chapter1.example3 actual:'t expected:'nil
 Test passed:2 failed:1 total:3
 ```
 
