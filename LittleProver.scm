@@ -122,4 +122,11 @@
    '((() (equal-swap (cons x y) (cons 'bagels '(and lox))))))
  (equal (cons 'bagels '(and lox)) (cons x y)))
 
+(my/test
+ "chapter1.example10"
+ (J-Bob/step (my/prelude)
+   '(cons y (equal (car (cons (cdr x) (car y))) (equal (atom x) 'nil)))
+   '(((2 1) (car/cons (cdr x) (car y)))))
+ (cons y (equal (cdr x) (equal (atom x) 'nil))))
+
 (my/test/result)
