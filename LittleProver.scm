@@ -24,16 +24,16 @@
 
 (define-syntax my/test
   (syntax-rules ()
-    ((_ name expected actual)
-     (let ((exp expected))
-       (if (equal exp (quote actual))
+    ((_ name actual expected)
+     (let ((act actual))
+       (if (equal (quote expected) actual)
            (set! my/test/passed (+ my/test/passed 1))
            (begin
              (display name)
-             (display " expected:")
-             (display exp)
              (display " actual:")
-             (display (quote actual))
+             (display act)
+             (display " expected:")
+             (display (quote expected))
              (newline)
              (set! my/test/failed (+ my/test/failed 1))))))))
 
