@@ -92,6 +92,13 @@
      ((2 2 2 1 2) (equal-swap (cons a b) c))))
  (cons y (equal (car (cons (car (cons (cdr x) (car y))) '(oats)))
                 (equal (atom x)
-                       (atom (cons (atom b) (equal c (cons a c))))))))
+                       (atom (cons (atom b) (equal c (cons a b))))))))
+
+(my/test
+ "chapter1.example12"
+ (J-Bob/step (my/prelude)
+   '(atom (car (cons (car a) (cdr b))))
+   '(((1) (car/cons (car a) (cdr b)))))
+ (atom (car a)))
 
 (my/test/result)
