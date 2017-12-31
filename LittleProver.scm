@@ -101,4 +101,11 @@
    '(((1) (car/cons (car a) (cdr b)))))
  '(atom (car a)))
 
+(my/test
+ "chapter2.example1"
+ (J-Bob/step (my/prelude)
+   '(if (car (cons a b)) c c)
+   '(((Q) (car/cons a b))))
+ '(if a c c))
+
 (my/test/result)

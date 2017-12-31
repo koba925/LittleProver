@@ -370,11 +370,13 @@ actualの式にクォートがついてるのにexpectedについてないとい
 
 「2 もう少し、いつものゲームを」
 
+`if`では数ではなくて`Q`、`A`、`E`で置き換え対象を指定します
 
-(my/test
- "chapter2.example1"
- (J-Bob/step (my/prelude)
-   '(if (car (cons a b)) c c)
-   '())
- '(if a c c))
+```
+(J-Bob/step (my/prelude)
+  '(if (car (cons a b)) c c)
+  '(((Q) (car/cons a b))))
+```
+
+
 
