@@ -316,3 +316,35 @@ Test passed:5 failed:1 total:6
 
 ここからひとつずつ置き換えを追加していって、テストが通ったら付録Bを見て答え合わせ
 パターンできた感じ
+
+# 定理証明手習い (7) ●
+
+1章のラスト
+こうやっていくらでも式をでっちあげられるから定理の自動証明は難しいんだ、
+っていうアピールですかね？
+
+```
+(my/test
+ "chapter1.example11"
+ (J-Bob/step (my/prelude)
+   '(cons y (equal (car (cons (cdr x) (car y))) (equal (atom x) 'nil)))
+   '(((2 1) (car/cons (car (cons (cdr x) (car y))) '(oats)))
+     ((2 2 2) (atom/cons (atom (cdr (cons a b))) (equal (cons a b) c)))
+     ((2 2 2 1 1 1) (cdr/cons a b))
+     ((2 2 2 1 2) (equal-swap (cons a b) c))))
+ (cons y (equal (car (cons (car (cons (cdr x) (car y))) '(oats)))
+                (equal (atom x)
+                       (atom (cons (atom b) (equal c (cons a b))))))))
+```
+
+しかしちょっとこれはつらい
+
+なにかもうちょっと楽ができるUIがほしい感じ
+でもどうなったら楽なのかちょっとわからない
+せめて途中経過の表示だけでも
+あとここにマッチしようとしてるけどしなかったとか
+と思ってj-bob.scmを見てみましたがちょっといい手が見つからず
+
+きっと普通にやるぶんにはもうちょっと楽だと信じて進む
+
+# 定理証明手習い (8) ●

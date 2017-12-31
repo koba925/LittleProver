@@ -82,4 +82,16 @@
    '(((2 1) (car/cons (cdr x) (car y)))))
  (cons y (equal (cdr x) (equal (atom x) 'nil))))
 
+(my/test
+ "chapter1.example11"
+ (J-Bob/step (my/prelude)
+   '(cons y (equal (car (cons (cdr x) (car y))) (equal (atom x) 'nil)))
+   '(((2 1) (car/cons (car (cons (cdr x) (car y))) '(oats)))
+     ((2 2 2) (atom/cons (atom (cdr (cons a b))) (equal (cons a b) c)))
+     ((2 2 2 1 1 1) (cdr/cons a b))
+     ((2 2 2 1 2) (equal-swap (cons a b) c))))
+ (cons y (equal (car (cons (car (cons (cdr x) (car y))) '(oats)))
+                (equal (atom x)
+                       (atom (cons (atom b) (equal c (cons a c))))))))
+
 (my/test/result)
