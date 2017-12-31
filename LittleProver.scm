@@ -13,3 +13,9 @@
   '(atom '())
   '((() (atom '()))))
 ; -> 't
+
+; chapter1.example3
+(J-Bob/step (prelude)
+  '(atom (cons a b))
+  '((() (atom/cons a b))))
+; -> 'nil
