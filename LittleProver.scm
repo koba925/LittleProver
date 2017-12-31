@@ -94,4 +94,12 @@
      (() (atom '()))))
  't)
 
+(my/test
+ "chapter1.example7"
+ (J-Bob/step (my/prelude)
+   '(atom (cdr (cons (car (cons p q)) '())))
+   '(((1) (cdr/cons (car (cons p q)) '()))
+     (() (atom '()))))
+ 't)
+
 (my/test/result)
