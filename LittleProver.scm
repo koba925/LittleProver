@@ -1,6 +1,35 @@
 (load "j-bob/j-bob-lang.scm")
 (load "j-bob/j-bob.scm")
 
+;; 自分用テスト
+
+(define my/test/passed 0)
+(define my/test/failed 0)
+
+(define-syntax my/test
+  (syntax-rules ()
+    ((_ name actual expected)
+     (let ((act actual))
+       (if (equal (quote expected) actual)
+           (set! my/test/passed (+ my/test/passed 1))
+           (begin
+             (display name)
+             (display "\nactual  :")
+             (display act)
+             (display "\nexpected:")
+             (display (quote expected))
+             (newline)
+             (set! my/test/failed (+ my/test/failed 1))))))))
+
+(define (my/test/result)
+  (display "Test passed:")
+  (display my/test/passed)
+  (display " failed:")
+  (display my/test/failed)
+  (display " total:")
+  (display (+ my/test/passed my/test/failed))
+  (newline))
+
 ;; 自分用prelude
 
 (defun my/axioms ()
@@ -20,35 +49,6 @@
 (defun my/prelude ()
   (J-Bob/define (my/axioms)
     '()))
-
-;; 自分用テスト
-
-(define my/test/passed 0)
-(define my/test/failed 0)
-
-(define-syntax my/test
-  (syntax-rules ()
-    ((_ name actual expected)
-     (let ((act actual))
-       (if (equal (quote expected) actual)
-           (set! my/test/passed (+ my/test/passed 1))
-           (begin
-             (display name)
-             (display " actual:")
-             (display act)
-             (display " expected:")
-             (display (quote expected))
-             (newline)
-             (set! my/test/failed (+ my/test/failed 1))))))))
-
-(define (my/test/result)
-  (display "Test passed:")
-  (display my/test/passed)
-  (display " failed:")
-  (display my/test/failed)
-  (display " total:")
-  (display (+ my/test/passed my/test/failed))
-  (newline))
 
 ; 1 いつものゲームにルールを
 
@@ -114,5 +114,12 @@
      ((1) (cons 't '(and crumpets)))
      (() (car '(t and crumpets)))))
  't)
+
+(my/test
+ "chapter1.example9"
+ (J-Bob/step (my/prelude)
+   '(equal (cons x y) (cons 'bagels '(and lox)))
+   '((() (equal-swap (cons x y) (cons 'bagels '(and lox))))))
+ (equal (cons 'bagels '(and lox)) (cons x y)))
 
 (my/test/result)
