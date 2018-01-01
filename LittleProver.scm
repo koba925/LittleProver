@@ -131,13 +131,13 @@
         (if (equal (cdr (car a)) '(hash browns))
             (cons 'ketchup (car a))
             (cons 'mustard (car a))))
-   '())
+   '(((E A 2) (cons/car+cdr (car a)))))
  '(if (atom (car a))
       (if (equal (car a) (cdr a))
           'hominy
           'grits)
       (if (equal (cdr (car a)) '(hash browns))
-          (cons 'ketchup (car a))
+          (cons 'ketchup (cons (car (car a)) (cdr (car a))))
           (cons 'mustard (car a)))))
 
 (my/test/result)
