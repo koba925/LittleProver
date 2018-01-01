@@ -1,13 +1,15 @@
 ;; 自分用prelude
 
 (defun my/axioms ()
-  '(; Consの公理（最初のバージョン）
+  '(; Consの公理（最終バージョン）
     (dethm atom/cons (x y)
       (equal (atom (cons x y)) 'nil))
     (dethm car/cons (x y)
       (equal (car (cons x y)) x))
     (dethm cdr/cons (x y)
       (equal (cdr (cons x y)) y))
+    (dethm cons/car+cdr (x)
+      (if (atom x) 't (equal (cons (car x) (cdr x)) x)))
     ; Equalの公理（最終バージョン）
     (dethm equal-same (x)
       (equal (equal x x) 't))
@@ -21,10 +23,7 @@
     (dethm if-false (x y)
       (equal (if 'nil x y) y))
     (dethm if-same (x y)
-      (equal (if x y y) y))
-
-    (dethm equal-trans (x y z)
-      (if (equal x y) (if (equal y z) (equal x z) 't) 't))))
+      (equal (if x y y) y))))
 
 (defun my/prelude ()
   (J-Bob/define (my/axioms)
