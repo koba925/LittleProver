@@ -121,4 +121,23 @@
       c
       c))
 
+(my/test
+ "chapter2.trial1"
+ (J-Bob/step (my/prelude)
+   '(if (equal x y) (if (equal y z) (equal x z) 't) 't)
+   '(((A Q) (equal-swap y z))
+     ((A A 1) (equal-if x y))
+     ((A A 2) (equal-if z y))
+     ((A A) (equal-same y))
+     ((A) (if-same (equal z y) 't))
+     (() (if-same (equal x y) 't))))
+ ''t)
+
+(my/test
+ "chapter2.trial2"
+ (J-Bob/step (my/prelude)
+   '(if (equal a b) (if (equal b c) a b) c)
+   '(((A A) (equal-trans a b c))))
+ '(if (equal a b) (if (equal b c) c b) c))
+
 (my/test/result)

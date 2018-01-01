@@ -21,7 +21,10 @@
     (dethm if-false (x y)
       (equal (if 'nil x y) y))
     (dethm if-same (x y)
-      (equal (if x y y) y))))
+      (equal (if x y y) y))
+
+    (dethm equal-trans (x y z)
+      (if (equal x y) (if (equal y z) (equal x z) 't) 't))))
 
 (defun my/prelude ()
   (J-Bob/define (my/axioms)

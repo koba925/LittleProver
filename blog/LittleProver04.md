@@ -395,6 +395,9 @@ actualの式にクォートがついてるのにexpectedについてないとい
   (if (equal x y) (equal x y) 't))
 ```
 
+`'t`ってなんだよ`'t`って、と思いましたがこれはたぶん定理は常に`'t`でないと
+いけないので入れてあるってことでしょう
+
 この`equal-if`を適用するためにDethmの公理が更新されてます
 公理のifのQと置き換え対象のifのQが同じなら、
 公理のAに含まれる`equal`を置き換え対象のAを、
@@ -415,7 +418,7 @@ actualの式にクォートがついてるのにexpectedについてないとい
 `equal-if`の公理でEqualの公理が完成します
 推移律じゃなかったか
 でも推移律作れそう
-`and`はないからこう・・・かな？
+`and`はないからこう・・・
 
 ```
   (if (equal x y) (if (equal y z) (equal x z) 't) 't)
@@ -426,18 +429,46 @@ actualの式にクォートがついてるのにexpectedについてないとい
 = 't
 ```
 
-でも
+かな？
 
 ```
-(dethm equal-trans (x y z)
-  (if (equal x y) (if (equal y z) (equal x z) 't) 't)
+> (J-Bob/step (my/prelude)
+    '(if (equal x y) (if (equal y z) (equal x z) 't) 't)
+    '(((A Q) (equal-swap y z))
+      ((A A 1) (equal-if x y))
+      ((A A 2) (equal-if z y))
+      ((A A) (equal-same y))
+      ((A) (if-same (equal z y) 't))
+      (() (if-same (equal x y) 't))))
+'t
 ```
 
-と定義したとしてこれを
-`(if (equal a b) (if (equal b c) a b) c)`みたいな式に適用して
-`(if (equal a b) (if (equal b c) b b) c)`みたいにできるかな？
-入れ子になったQを適用する法則がないから
-Dethmの法則に厳密に従おうとすると結局`equal-if`を順番に適用するしかないような？
+いけた
+
+じゃあ`my/axioms`にこうやって公理を付け加えたら
+
+```    
+(defun my/axioms ()
+     :
+     :
+    (dethm equal-trans (x y z)
+      (if (equal x y) (if (equal y z) (equal x z) 't) 't))))
+```
+
+`(if (equal a b) (if (equal b c) a b) c)`みたいなのを
+`(if (equal a b) (if (equal b c) c b) c)`のように置き換えられたりするかな？
+
+```
+> (J-Bob/step (my/prelude)
+    '(if (equal a b) (if (equal b c) a b) c)
+    '(((A A) (equal-trans a b c))))
+(if (equal a b) (if (equal b c) c b) c)
+```
+
+できた
+あてずっぽうでもけっこう動くもんだなと思って`jabberwocky`も動かしてみようと
+思いましたが悪戦苦闘のあげくうまくいきませんでした
+ちゃんとわかってきたらできるのかな？
 
 なお
 
@@ -446,3 +477,83 @@ Dethmの法則に厳密に従おうとすると結局`equal-if`を順番に適�
 
 こういう場合は公理で置き換えても、単に関数適用してもどっちでもいいってことですね
 疑問氷解しました
+
+# Jabberwocky
+
+悪戦苦闘したけどダメ
+しばらく進めてたらちゃんとやれるかも？
+
+```
+
+(defun my/axioms+jw ()
+  (append (my/axioms) 
+          '((dethm jabberwocky (x)
+              (if (brillig x)
+                  (if (slithy x)
+                      (equal (mimsy x) 'borogove)
+                      (equal (mome x) 'rath))
+                  (if (uffish x)
+                      (equal (frumious x) 'bandersnatch)
+                      (equal (frabjous x) 'beamish)))))))
+
+(defun my/prelude+jw ()
+  (J-Bob/define (my/axioms+jw)
+    '()))
+
+(J-Bob/step (my/prelude+jw)
+  '(if (brillig '(callooh callay))
+       (if (uffish '(callooh callay))
+           't
+           (cons 'bandersnatch 't))
+       't)
+  '(((A E 1) (jabberwocky '(callooh callay)))))
+
+(my/test
+ "chapter2.exampleA"
+ (J-Bob/step (my/prelude+jw)
+   '(cons 'gyre
+          (if (uffish '(callooh callay))
+              (cons 'gimble
+                    (if (brillig '(callooh callay))
+                        (cons 'borogove '(outgrabe))
+                        (cons 'bandersnatch '(wabe))))
+              (cons (frabjous '(callooh callay)) '(vorpal))))
+   '(((2 A 2 E 1) (jabberwocky '(callooh callay)))))
+ '(cons 'gyre
+        (if (uffish '(callooh callay))
+            (cons 'gimble
+                  (if (brillig '(callooh callay))
+                      (cons 'borogove '(outgrabe))
+                      (cons '(frumious '(callooh callay)) '(wabe))))
+            (cons (frabjous '(callooh callay)) '(vorpal)))))
+```
+
+関数を追加してもダメ
+
+```
+(define (id x) x)
+(define brillig id)
+(define slithy id)
+(define mimsy id)
+(define mome id)
+(define uffish id)
+(define frumious id)
+(define frabjous id)
+```
+
+my/axiomsに追加してもダメ
+
+```
+    ; 追加
+    (dethm jabberwocky (x)
+      (if (brillig x)
+          (if (slithy x)
+              (equal (mimsy x) 'borogove)
+              (equal (mome x) 'rath))
+          (if (uffish x)
+              (equal (frumious x) 'bandersnatch)
+              (equal (frabjous x) 'beamish))))
+```
+
+そもそも公理として認識されてない模様
+当てずっぽうはここまで
