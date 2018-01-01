@@ -8,11 +8,13 @@
       (equal (car (cons x y)) x))
     (dethm cdr/cons (x y)
       (equal (cdr (cons x y)) y))
-    ; Equalの公理（最初のバージョン）
+    ; Equalの公理（最終バージョン）
     (dethm equal-same (x)
       (equal (equal x x) 't))
     (dethm equal-swap (x y)
       (equal (equal x y) (equal y x)))
+    (dethm equal-if (x y)
+      (if (equal x y) (equal x y) 't))
     ; Ifの公理（最初のバージョン)
     (dethm if-true (x y)
       (equal (if 't x y) x))

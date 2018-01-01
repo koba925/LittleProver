@@ -105,7 +105,20 @@
  "chapter2.example1"
  (J-Bob/step (my/prelude)
    '(if (car (cons a b)) c c)
-   '(((Q) (car/cons a b))))
- '(if a c c))
+   '(((Q) (car/cons a b))
+     (() (if-same a c))
+     (() (if-same (if (equal a 't)
+                      (if (equal 'nil 'nil) a b)
+                      (equal 'or (cons 'black '(coffee))))
+                  c))
+     ((Q E 2) (cons 'black '(coffee)))
+     ((Q A Q) (equal-same 'nil))
+     ((Q A) (if-true a b))
+     ((Q A) (equal-if a 't))))
+ '(if (if (equal a 't)
+          't
+          (equal 'or '(black coffee)))
+      c
+      c))
 
 (my/test/result)
