@@ -140,4 +140,43 @@
           (cons 'ketchup (cons (car (car a)) (cdr (car a))))
           (cons 'mustard (car a)))))
 
+(my/test
+ "chapter2.example3"
+ (J-Bob/step (my/prelude)
+   '(cons 'statement
+          (cons
+           (if (equal a 'question)
+               (cons n '(answer))
+               (cons n '(else)))
+           (if (equal a 'question)
+               (cons n '(other answer))
+               (cons n '(other else)))))
+   '(((2) (if-same (equal a 'question)
+                   (cons
+                    (if (equal a 'question)
+                        (cons n '(answer))
+                        (cons n '(else)))
+                    (if (equal a 'question)
+                        (cons n '(other answer))
+                        (cons n '(other else))))))
+     ((2 A 1) (if-nest-A (equal a 'question)
+                         (cons n '(answer))
+                         (cons n '(else))))
+     ((2 E 1) (if-nest-E (equal a 'question)
+                         (cons n '(answer))
+                         (cons n '(else))))
+     ((2 A 2) (if-nest-A (equal a 'question)
+                         (cons n '(other answer))
+                         (cons n '(other else))))
+     ((2 E 2) (if-nest-E (equal a 'question)
+                         (cons n '(other answer))
+                         (cons n '(other else))))))
+ '(cons 'statement
+        (if (equal a 'question)
+            (cons (cons n '(answer)) (cons n '(other answer)))
+            (cons (cons n '(else)) (cons n '(other else))))))
+
 (my/test/result)
+
+(J-Bob/prove (my/prelude)
+             '())
