@@ -179,4 +179,13 @@
 (my/test/result)
 
 (J-Bob/prove (my/prelude)
-             '())
+             '(((defun pair (x y)
+                  (cons x (cons y '())))
+                nil)
+               ((defun first-of (x)
+                  (car x))
+                nil)
+               ((defun second-of (x)
+                  (car (cdr x)))
+                nil)))
+
