@@ -202,8 +202,9 @@
   '(((dethm second-of-pair (a b)
        (equal (second-of (pair a b)) b))
      nil
-     ((1 1) (pair a b))
-     ((1) (second-of (cons a (cons b '()))))
+     ((1) (second-of (pair a b)))
+     ((1 1 1) (pair a b))
      ((1 1) (cdr/cons a (cons b '())))
      ((1) (car/cons b '()))
-     (() (equal-same b)))))
+     (() (equal-same b))
+     )))
