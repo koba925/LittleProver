@@ -430,6 +430,25 @@ Dethmの法則と似てるところもありますがここでは「再帰的で
 証明できた定理は`J-Bob/define`を使って他の証明で使いまわせるようにできます
 書き方は`J-Bob/prove`とほとんど同じ感じ
 
+```
+> (J-Bob/define (my/prelude)
+    '(((defun pair (x y)
+         (cons x (cons y '())))
+       nil)))
+((dethm atom/cons (x y) (equal (atom (cons x y)) 'nil))
+  :
+ (dethm if-nest-e (x y z) (if x 't (equal (if x y z) z)))
+ (defun pair (x y) (cons x (cons y '()))))
+```
+
+実はリストの末尾に定義をくっつけてるだけ？
+（証明済みかどうかのチェックはあるんだろうけど）
+
+付録Aではいくつかの関数や定理をまとめて定義してますが
+付録Bでは関数や定理をひとつずつ定義していきます
+この違いはなんなんでしょうか
+分けておけば必要な部分だけ使える、ていっても分けて使う場面は出てくるんでしょうか
+
 # Jabberwocky
 
 悪戦苦闘したけどダメ
