@@ -2,6 +2,7 @@
 (load "j-bob/j-bob.scm")
 (load "mytest.scm")
 (load "myprelude.scm")
+(load "util.scm")
 
 ; 1 いつものゲームにルールを
 
@@ -101,6 +102,8 @@
    '(((1) (car/cons (car a) (cdr b)))))
  '(atom (car a)))
 
+;; 2. もう少し、いつものゲームを
+
 (my/test
  "chapter2.example1"
  (J-Bob/step (my/prelude)
@@ -176,7 +179,7 @@
             (cons (cons n '(answer)) (cons n '(other answer)))
             (cons (cons n '(else)) (cons n '(other else))))))
 
-(my/test/result)
+;; 3. 名前に何が？
 
 (defun defun.pair ()
   (J-Bob/define (my/prelude)
@@ -184,17 +187,23 @@
          (cons x (cons y '())))
        nil))))
 
+(my/test/define 'defun.pair)
+
 (defun defun.first-of ()
   (J-Bob/define (defun.pair)
     '(((defun first-of (x)
          (car x))
        nil))))
 
+(my/test/define 'defun.first-of)
+
 (defun defun.second-of ()
   (J-Bob/define (defun.first-of)
     '(((defun second-of (x)
          (car (cdr x)))
       nil))))
+
+(my/test/define 'defun.second-of)
 
 (defun dethm.first-of-pair ()
   (J-Bob/define (defun.second-of)
@@ -206,13 +215,20 @@
        ((1) (car/cons a (cons b '())))
        (() (equal-same a))))))
 
-(J-Bob/prove (dethm.first-of-pair)
-  '(((dethm second-of-pair (a b)
-       (equal (second-of (pair a b)) b))
-     nil
-     ((1) (second-of (pair a b)))
-     ((1 1 1) (pair a b))
-     ((1 1) (cdr/cons a (cons b '())))
-     ((1) (car/cons b '()))
-     (() (equal-same b))
-     )))
+(my/test/define 'dethm.first-of-pair)
+
+(defun dethm.second-of-pair ()
+  (J-Bob/define (dethm.first-of-pair)
+    '(((dethm second-of-pair (a b)
+         (equal (second-of (pair a b)) b))
+       nil
+       ((1) (second-of (pair a b)))
+       ((1 1 1) (pair a b))
+       ((1 1) (cdr/cons a (cons b '())))
+       ((1) (car/cons b '()))
+       (() (equal-same b))))))
+
+(my/test/define 'dethm.second-of-pair)
+
+(my/test/result)
+

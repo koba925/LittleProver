@@ -23,3 +23,11 @@
   (display " total:")
   (display (+ my/test/passed my/test/failed))
   (newline))
+
+(define-syntax my/test/define
+  (syntax-rules ()
+    ((_ name)
+     (my/test
+      (symbol->string name)
+      (last-name ((eval name (interaction-environment))))
+      (name-part name)))))
