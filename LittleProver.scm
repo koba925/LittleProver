@@ -291,4 +291,14 @@
                       (cons (frumious '(callooh callay)) '(wabe))))
             (cons (frabjous '(callooh callay)) '(vorpal)))))
 
+(defun defun.in-pair? ()
+  (J-Bob/define (dethm.second-of-pair)
+    '(((defun in-pair? (xs)
+         (if (equal (first-of xs) '?)
+             't
+             (equal (second-of xs) '?)))
+       nil))))
+
+(my/test/define 'defun.in-pair?)
+
 (my/test/result)
