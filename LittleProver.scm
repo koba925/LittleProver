@@ -230,5 +230,65 @@
 
 (my/test/define 'dethm.second-of-pair)
 
-(my/test/result)
+(defun dethm.jabberwocky ()
+  (J-Bob/define (my/prelude)
+    '(((defun brillig (x) 't)
+       nil)
+      ((defun slithy (x) 't)
+       nil)
+      ((defun uffish (x) 't)
+       nil)
+      ((defun mimsy (x) 'borogove)
+       nil)
+      ((defun mome (x) 'rath)
+       nil)
+      ((defun frumious (x) 'bandersnatch)
+       nil)
+      ((defun frabjous (x) 'beamish)
+       nil)
+      ((dethm jabberwocky (x)
+         (if (brillig x)
+             (if (slithy x)
+                 (equal (mimsy x) 'borogove)
+                 (equal (mome x) 'rath))
+             (if (uffish x)
+                 (equal (frumious x) 'bandersnatch)
+                 (equal (frabjous x) 'beamish))))
+       nil
+       ((Q) (brillig x))
+       (() (if-true
+            (if (slithy x)
+                (equal (mimsy x) 'borogove)
+                (equal (mome x) 'rath))
+            (if (uffish x)
+                (equal (frumious x) 'bandersnatch)
+                (equal (frabjous x) 'beamish))))
+       ((Q) (slithy x))
+       (() (if-true
+            (equal (mimsy x) 'borogove)
+            (equal (mome x) 'rath)))
+       ((1) (mimsy x))
+       (() (equal-same 'borogove))))))
 
+(my/test/define 'dethm.jabberwocky)
+
+(my/test
+ "chapter2.exampleJW"
+ (J-Bob/step (dethm.jabberwocky)
+   '(cons 'gyre
+          (if (uffish '(callooh callay))
+              (cons 'gimble
+                    (if (brillig '(callooh callay))
+                        (cons 'borogove '(outgrabe))
+                        (cons 'bandersnatch '(wabe))))
+              (cons (frabjous '(callooh callay)) '(vorpal))))
+   '(((2 A 2 E 1) (jabberwocky '(callooh callay)))))
+ '(cons 'gyre
+        (if (uffish '(callooh callay))
+            (cons 'gimble
+                  (if (brillig '(callooh callay)) 
+                      (cons 'borogove '(outgrabe)) 
+                      (cons (frumious '(callooh callay)) '(wabe))))
+            (cons (frabjous '(callooh callay)) '(vorpal)))))
+
+(my/test/result)
