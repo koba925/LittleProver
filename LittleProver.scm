@@ -316,45 +316,41 @@
 
 (my/test/define 'dethm.in-first-of-pair)
 
+(defun dethm.in-second-of-pair ()
+  (J-Bob/define (dethm.in-first-of-pair)
+    '(((dethm in-second-of-pair (a)
+         (equal (in-pair? (pair a '?)) 't))
+       nil
+       ((1) (in-pair? (pair a '?)))
+       ((1 E 1) (second-of (pair a '?)))
+       ((1 E 1 1 1) (pair a '?))
+       ((1 E 1 1) (cdr/cons  a (cons '? '())))
+       ((1 E 1) (car/cons '? '()))
+       ((1 E) (equal-same '?))
+       ((1) (if-same (equal (first-of (pair a '?)) '?) 't))
+       (() (equal-same 't))))))
+
+(my/test/define 'dethm.in-second-of-pair)
+
+(my/test
+ "chapter4.example0"
+ (J-Bob/step (my/prelude)
+   '(if (equal x 'oatmeal)
+        'nil
+        (if (equal x '())
+            't
+            (if (equal x '(toast))
+                'nil
+                'nil)))
+   '(((E E) (if-same (equal x '(toast)) 'nil))
+     (() (if-same (equal x '())
+                  (if (equal x 'oatmeal) 'nil (if (equal x '()) 't 'nil))))
+     ((A E) (if-nest-A (equal x '()) 't 'nil))
+     ((E E) (if-nest-E (equal x '()) 't 'nil))
+     ((E) (if-same (equal x 'oatmeal) 'nil))
+     ((A Q 1) (equal-if x '()))
+     ((A Q) (equal '() 'oatmeal))
+     ((A) (if-false 'nil 't))))
+ '(if (equal x '()) 't 'nil))
+
 (my/test/result)
-
-(J-Bob/prove (dethm.in-first-of-pair)
-  '(((dethm in-second-of-pair (a)
-       (equal (in-pair? (pair a '?)) 't))
-     nil
-     ((1 1) (pair a '?))
-     ((1) (in-pair? (cons a (cons '? '()))))
-     ((1 Q 1) (first-of (cons a (cons '? '()))))
-     ((1 Q 1) (car/cons a (cons '? '())))
-     ((1 E 1) (second-of (cons a (cons '? '()))))
-     ((1 E 1 1) (cdr/cons  a (cons '? '())))
-     ((1 E 1) (car/cons '? '()))
-     ((1 E) (equal-same '?))
-     ((1) (if-same (equal a '?) 't))
-     (() (equal-same 't)))))
-
-(J-Bob/prove (dethm.in-first-of-pair)
-  '(((dethm in-second-of-pair (a)
-       (equal (in-pair? (pair a '?)) 't))
-     nil
-     ((1 1) (pair a '?))
-     ((1) (in-pair? (cons a (cons '? '()))))
-     ((1 E 1) (second-of (cons a (cons '? '()))))
-     ((1 E 1 1) (cdr/cons  a (cons '? '())))
-     ((1 E 1) (car/cons '? '()))
-     ((1 E) (equal-same '?))
-     ((1) (if-same (equal (first-of (cons a (cons '? '()))) '?) 't))
-     (() (equal-same 't)))))
-
-(J-Bob/define (dethm.in-first-of-pair)
-  '(((dethm in-second-of-pair (a)
-       (equal (in-pair? (pair a '?)) 't))
-     nil
-     ((1) (in-pair? (pair a '?)))
-     ((1 E 1) (second-of (pair a '?)))
-     ((1 E 1 1 1) (pair a '?))
-     ((1 E 1 1) (cdr/cons  a (cons '? '())))
-     ((1 E 1) (car/cons '? '()))
-     ((1 E) (equal-same '?))
-     ((1) (if-same (equal (first-of (pair a '?)) '?) 't))
-     (() (equal-same 't)))))
