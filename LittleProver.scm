@@ -353,4 +353,15 @@
      ((A) (if-false 'nil 't))))
  '(if (equal x '()) 't 'nil))
 
+(defun defun.list0? ()
+  (J-Bob/define (dethm.in-second-of-pair)
+    '(((defun list0? (x)
+         (equal x '()))
+       nil))))
+
+(my/test/define 'defun.list0?)
+
 (my/test/result)
+
+
+
