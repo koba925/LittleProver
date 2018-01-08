@@ -373,7 +373,25 @@
 
 (my/test/define 'defun.list1?)
 
+(defun defun.list2? ()
+  (J-Bob/define (defun.list1?)
+    '(((defun list2? (x)
+         (if (atom x)
+             'nil
+             (list1? (cdr x))))
+       nil))))
+
+(my/test/define 'defun.list2?)
+
 ;; テスト結果
 
 (my/test/result)
 
+;; 作業エリア
+
+(J-Bob/prove
+  (list-extend (my/prelude)
+    '(defun partial (x)
+       (if (partial x) 'nil 't)))
+  '(((dethm contradiction () 'nil)
+     nil)))
