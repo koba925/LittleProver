@@ -353,6 +353,8 @@
      ((A) (if-false 'nil 't))))
  '(if (equal x '()) 't 'nil))
 
+;; 4. これが完全なる朝食
+
 (defun defun.list0? ()
   (J-Bob/define (dethm.in-second-of-pair)
     '(((defun list0? (x)
@@ -361,7 +363,17 @@
 
 (my/test/define 'defun.list0?)
 
+(defun defun.list1? ()
+  (J-Bob/define (defun.list0?)
+    '(((defun list1? (x)
+         (if (atom x)
+             'nil
+             (list0? (cdr x))))
+       nil))))
+
+(my/test/define 'defun.list1?)
+
+;; テスト結果
+
 (my/test/result)
-
-
 
