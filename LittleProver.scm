@@ -383,15 +383,42 @@
 
 (my/test/define 'defun.list2?)
 
+(my/test
+ "dethm.contradiction"
+ (J-Bob/prove
+   (list-extend (my/prelude)
+     '(defun partial (x)
+        (if (partial x) 'nil 't)))
+   '(((dethm contradiction () 'nil)
+      nil
+      (() (if-same (partial x) 'nil))
+      ((A) (if-nest-A (partial x) 'nil 't))
+      ((E) (if-nest-E (partial x) 't 'nil))
+      ((A Q) (partial x))
+      ((E Q) (partial x))
+      ((A Q) (if-nest-A (partial x) 'nil 't))
+      ((E Q) (if-nest-E (partial x) 'nil 't))
+      ((A) (if-false 'nil 't))
+      ((E) (if-true 't 'nil))
+      (() (if-same (partial x) 't)))))
+ ''t)
+
+(defun defun.list? ()
+  (J-Bob/define (defun.list2?)
+    '(((defun list? (x)
+         (if (atom x)
+             (equal x '())
+             (list? (cdr x))))
+       (size x)
+       ((Q) (natp/size x))
+       (() (if-true (if (atom x) 't (< (size (cdr x)) (size x))) 'nil))
+       ((E) (size/cdr x))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'defun.list?)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
-
-(J-Bob/prove
-  (list-extend (my/prelude)
-    '(defun partial (x)
-       (if (partial x) 'nil 't)))
-  '(((dethm contradiction () 'nil)
-     nil)))

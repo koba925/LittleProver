@@ -27,7 +27,16 @@
     (dethm if-nest-A (x y z)
       (if x (equal (if x y z) y) 't))
     (dethm if-nest-E (x y z)
-      (if x 't (equal (if x y z) z)))))
+      (if x 't (equal (if x y z) z)))
+    ; Sizeの公理
+    (dethm natp/size (x)
+      (equal (natp (size x)) 't))
+    (dethm size/car (x)
+      (if (atom x) 't
+          (equal (< (size (car x)) (size x)) 't)))
+    (dethm size/cdr (x)
+      (if (atom x) 't
+          (equal (< (size (cdr x)) (size x)) 't)))))
 
 (defun my/prelude ()
   (J-Bob/define (my/axioms)
