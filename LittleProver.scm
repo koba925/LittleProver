@@ -422,3 +422,26 @@
 (my/test/result)
 
 ;; 作業エリア
+
+
+(J-Bob/prove (defun.list?)
+  '(((defun sub (x y)
+      (if (atom y)
+          (if (equal y '?)
+              x
+              y)
+          (cons (sub x (car y))
+                (sub x (cdr y)))))
+     (size y)
+     ((Q) (natp/size y))
+     (() (if-true (if (atom y)
+                      't
+                      (if (< (size (car y)) (size y))
+                          (< (size (cdr y)) (size y))
+                          'nil))
+                  'nil))
+     ((E Q) (size/car y))
+     ((E A) (size/cdr y))
+     ((E) (if-true 't 'nil))
+     (() (if-same (atom y) 't))
+     )))
