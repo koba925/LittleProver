@@ -441,7 +441,6 @@
 
 (my/test/define 'defun.sub)
 
-
 (my/test
  "chapter4.partial"
  (J-Bob/prove
@@ -456,6 +455,48 @@
       ((Q) (size-same x))
       (() (if-false 't 'nil)))))
  ''nil)
+
+;; 5. 何回も何回も何回も考えよう
+
+
+(defun defun.memb? ()
+  (J-Bob/define (my/prelude)
+    '(((defun memb? (xs)
+         (if (atom xs)
+             'nil
+             (if (equal (car xs) '?)
+                 't
+                 (memb? (cdr xs)))))
+       (size xs)
+       ((Q) (natp/size xs))
+       (() (if-true (if (atom xs)
+                        't
+                        (if (equal (car xs) '?)
+                            't
+                            (< (size (cdr xs)) (size xs))))
+                    'nil))
+       ((E E) (size/cdr xs))
+       ((E) (if-same (equal (car xs) '?) 't))
+       (() (if-same (atom xs) 't))))))
+
+(my/test/define 'defun.memb?)
+
+(defun defun.remb ()
+  (J-Bob/define (defun.memb?)
+    '(((defun remb (xs)
+         (if (atom xs)
+             '()
+             (if (equal (car xs) '?)
+                 (remb (cdr xs))
+                 (cons (car xs)
+                       (remb (cdr xs))))))
+       (size xs)
+       ((Q) (natp/size xs))
+       (() (if-true (if (atom xs) 't (< (size (cdr xs)) (size xs))) 'nil))
+       ((E) (size/cdr xs))
+       (() (if-same (atom xs) 't))))))
+
+(my/test/define 'defun.remb)
 
 ;; テスト結果
 
