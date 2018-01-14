@@ -427,15 +427,41 @@ Scheme風に書いた方では`#t`が`#になってるけれども
 (if (< (size x) (size x)) 't 'nil)
 ```
 
-ここで`(< (size x) (size x))`なはずはないから偽、となってますが
-なにかごまかしてないですか？
-公理でも関数適用でも先へ進めなければ
+ここで`(< (size x) (size x))`なはずはないから偽、となってて
+意味的にはわかりますが形式的にはごにょごにょしてません？
 「このやり方では全域であるとは証明できなかった」までしか言えてないのでは？
+前にも行き詰まったらもとに戻ってやり直せる、みたいなこと言ってたし
 
+たとえばこんな公理があれば
 
-(J-Bob/prove (my/prelude)
-  '(((defun partial (x)
-       (if (partial x) 'nil 't))
-     (size x)
-     ((Q) (natp/size x))
-     (() (if-true (if (< (size x) (size x)) 't 'nil) 'nil)))))
+```
+(dethm size-same (x)
+       (equal (< (size x) (size x)) 'nil))
+```
+
+証明できます
+
+```
+> (J-Bob/prove
+    (list-extend (my/prelude)
+      '(dethm size-same (x)
+         (equal (< (size x) (size x)) 'nil)))
+    '(((defun partial (x)
+         (if (partial x) 'nil 't))
+       (size x)
+       ((Q) (natp/size x))
+       (() (if-true (if (< (size x) (size x)) 't 'nil) 'nil))
+       ((Q) (size-same x))
+       (() (if-false 't 'nil)))))
+'nil
+```
+
+`'nil`って返されてしまうと、失敗の`'nil`と見分けがつきませんけれども
+
+このあたり、本気でやってる人たちはどう扱ってるんでしょうか
+
+もうひとつ、
+`(if (< (size x) (size x)) 't 'nil)`までで止まったということはこの形、
+やっぱりここで行き止まりってことなんですかね
+何かしたら`(< (size x) (size x))`に書き換えられる、ってことはなさそう？
+ただここでやめただけ、かもしれないけど

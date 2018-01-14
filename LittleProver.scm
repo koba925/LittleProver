@@ -417,31 +417,48 @@
 
 (my/test/define 'defun.list?)
 
+(defun defun.sub ()
+  (J-Bob/define (defun.list?)
+    '(((defun sub (x y)
+         (if (atom y)
+             (if (equal y '?)
+                 x
+                 y)
+             (cons (sub x (car y))
+                   (sub x (cdr y)))))
+       (size y)
+       ((Q) (natp/size y))
+       (() (if-true (if (atom y)
+                        't
+                        (if (< (size (car y)) (size y))
+                            (< (size (cdr y)) (size y))
+                            'nil))
+                    'nil))
+       ((E Q) (size/car y))
+       ((E A) (size/cdr y))
+       ((E) (if-true 't 'nil))
+       (() (if-same (atom y) 't))))))
+
+(my/test/define 'defun.sub)
+
+
+(my/test
+ "chapter4.partial"
+ (J-Bob/prove
+   (list-extend (my/prelude)
+     '(dethm size-same (x)
+        (equal (< (size x) (size x)) 'nil)))
+   '(((defun partial (x)
+        (if (partial x) 'nil 't))
+      (size x)
+      ((Q) (natp/size x))
+      (() (if-true (if (< (size x) (size x)) 't 'nil) 'nil))
+      ((Q) (size-same x))
+      (() (if-false 't 'nil)))))
+ ''nil)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
-
-
-(J-Bob/prove (defun.list?)
-  '(((defun sub (x y)
-      (if (atom y)
-          (if (equal y '?)
-              x
-              y)
-          (cons (sub x (car y))
-                (sub x (cdr y)))))
-     (size y)
-     ((Q) (natp/size y))
-     (() (if-true (if (atom y)
-                      't
-                      (if (< (size (car y)) (size y))
-                          (< (size (cdr y)) (size y))
-                          'nil))
-                  'nil))
-     ((E Q) (size/car y))
-     ((E A) (size/cdr y))
-     ((E) (if-true 't 'nil))
-     (() (if-same (atom y) 't))
-     )))
