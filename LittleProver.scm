@@ -503,3 +503,20 @@
 (my/test/result)
 
 ;; 作業エリア
+
+(J-Bob/prove (defun.remb)
+  '(((dethm memb?/remb0 ()
+       (equal (memb? (remb '())) 'nil))
+     nil
+     ((1 1) (remb '()))
+     ((1 1 Q) (atom '()))
+     ((1 1) (if-true '()
+                     (if (equal (car '()) '?)
+                         (remb (cdr '()))
+                         (cons (car '()) (remb (cdr '()))))))
+     ((1) (memb? '()))
+     ((1 Q) (atom '()))
+     ((1) (if-true 'nil (if (equal (car '()) '?)
+                            't
+                            (memb? (cdr '())))))
+     (() (equal-same 'nil)))))
