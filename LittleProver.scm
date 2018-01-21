@@ -558,9 +558,52 @@
 
 (my/test/define 'dethm.memb?/remb1)
 
+(defun dethm.memb?/remb2 ()
+  (J-Bob/define (dethm.memb?/remb1)
+    '(((dethm memb?/remb2 (x1 x2)
+         (equal (memb? (remb (cons x2 (cons x1 '())))) 'nil))
+       nil
+       ((1 1) (remb (cons x2 (cons x1 '()))))
+       ((1 1 Q) (atom/cons x2 (cons x1 '())))
+       ((1 1) (if-false '()
+                        (if (equal (car (cons x2 (cons x1 '()))) '?)
+                            (remb (cdr (cons x2 (cons x1 '()))))
+                            (cons (car (cons x2 (cons x1 '())))
+                                  (remb (cdr (cons x2 (cons x1 '()))))))))
+       ((1 1 Q 1) (car/cons x2 (cons x1 '())))
+       ((1 1 A 1) (cdr/cons x2 (cons x1 '())))
+       ((1 1 E 1) (car/cons x2 (cons x1 '())))
+       ((1 1 E 2 1) (cdr/cons x2 (cons x1 '())))
+       ((1) (if-same (equal x2 '?)
+                     (memb? (if (equal x2 '?)
+                                (remb (cons x1 '()))
+                                (cons x2 (remb (cons x1 '())))))))
+       ((1 A 1) (if-nest-A (equal x2 '?)
+                           (remb (cons x1 '()))
+                           (cons x2 (remb (cons x1 '())))))
+       ((1 E 1) (if-nest-E (equal x2 '?)
+                           (remb (cons x1 '()))
+                           (cons x2 (remb (cons x1 '())))))
+       ((1 A) (memb?/remb1 x1))
+       ((1 E) (memb? (cons x2 (remb (cons x1 '())))))
+       ((1 E Q) (atom/cons x2 (remb (cons x1 '()))))
+       ((1 E) (if-false 'nil
+                        (if (equal (car (cons x2 (remb (cons x1 '())))) '?)
+                            't
+                            (memb? (cdr (cons x2 (remb (cons x1 '()))))))))
+       ((1 E Q 1) (car/cons x2 (remb (cons x1 '()))))
+       ((1 E E 1) (cdr/cons x2 (remb (cons x1 '()))))
+       ((1 E) (if-nest-E (equal x2 '?) 't (memb? (remb (cons x1 '())))))
+       ((1 E) (memb?/remb1 x1))
+       ((1) (if-same (equal x2 '?) 'nil))
+       (() (equal-same 'nil))))))
+
+(my/test/define 'dethm.memb?/remb2)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
+
 
