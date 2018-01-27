@@ -456,6 +456,22 @@
       (() (if-false 't 'nil)))))
  ''nil)
 
+(my/test
+ "chapter4.partial2"
+ (J-Bob/prove
+   (list-extend (my/prelude)
+     '(dethm smaller-same (x)
+        (equal (< x x) 'nil)))
+   '(((defun partial (x)
+        (if (partial x) 'nil 't))
+      (size x)
+      ((Q) (natp/size x))
+      (() (if-true (if (< (size x) (size x)) 't 'nil) 'nil))
+      ((Q) (smaller-same (size x)))
+      (() (if-false 't 'nil))
+      )))
+ ''nil)
+
 ;; 5. 何回も何回も何回も考えよう
 
 (defun defun.memb? ()
@@ -600,10 +616,61 @@
 
 (my/test/define 'dethm.memb?/remb2)
 
+(defun dethm.memb?/remb ()
+  (J-Bob/define (dethm.memb?/remb2)
+    '(((dethm memb?/remb (xs)
+         (equal (memb? (remb xs)) 'nil))
+       (list-induction xs)
+       ((A 1 1) (remb xs))
+       ((A 1 1) (if-nest-A (atom xs)
+                           '()
+                           (if (equal (car xs) '?)
+                               (remb (cdr xs))
+                               (cons (car xs) (remb (cdr xs))))))
+       ((A 1) (memb? '()))
+       ((A 1 Q) (atom '()))
+       ((A 1) (if-true 'nil
+                       (if (equal (car '()) '?)
+                           't
+                           (memb? (cdr '())))))
+       ((A) (equal-same 'nil))
+       ((E A 1 1) (remb xs))
+       ((E A 1 1) (if-nest-E (atom xs)
+                             '()
+                             (if (equal (car xs) '?)
+                                 (remb (cdr xs))
+                                 (cons (car xs) (remb (cdr xs))))))
+       ((E A 1) (if-same (equal (car xs) '?)
+                         (memb? (if (equal (car xs) '?)
+                                    (remb (cdr xs))
+                                    (cons (car xs) (remb (cdr xs)))))))
+       ((E A 1 A 1) (if-nest-A (equal (car xs) '?)
+                               (remb (cdr xs))
+                               (cons (car xs) (remb (cdr xs)))))
+       ((E A 1 E 1) (if-nest-E (equal (car xs) '?)
+                               (remb (cdr xs))
+                               (cons (car xs) (remb (cdr xs)))))
+       ((E A 1 A) (equal-if (memb? (remb (cdr xs))) 'nil))
+       ((E A 1 E) (memb? (cons (car xs) (remb (cdr xs)))))
+       ((E A 1 E Q) (atom/cons (car xs) (remb (cdr xs))))
+       ((E A 1 E) (if-false 'nil
+                            (if (equal (car (cons (car xs) (remb (cdr xs)))) '?)
+                                't
+                                (memb? (cdr (cons (car xs) (remb (cdr xs))))))))
+       ((E A 1 E Q 1) (car/cons (car xs) (remb (cdr xs))))
+       ((E A 1 E E 1) (cdr/cons (car xs) (remb (cdr xs))))
+       ((E A 1 E) (if-nest-E (equal (car xs) '?) 't (memb? (remb (cdr xs)))))
+       ((E A 1 E) (equal-if (memb? (remb (cdr xs))) 'nil))
+       ((E A 1) (if-same (equal (car xs) '?) 'nil))
+       ((E A) (equal-same 'nil))
+       ((E) (if-same (equal (memb? (remb (cdr xs))) 'nil) 't))
+       (() (if-same (atom xs) 't))))))
+
+(my/test/define 'dethm.memb?/remb)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
-
 
