@@ -668,6 +668,32 @@
 
 (my/test/define 'dethm.memb?/remb)
 
+(defun defun.ctx? ()
+  (J-Bob/define (dethm.memb?/remb)
+    '(((defun ctx? (x)
+         (if (atom x)
+             (equal x '?)
+             (if (ctx? (car x))
+                 't
+                 (ctx? (cdr x)))))
+       (size x)
+       ((Q) (natp/size x))
+       (() (if-true (if (atom x)
+                        't
+                        (if (< (size (car x)) (size x))
+                            (if (ctx? (car x))
+                                't
+                                (< (size (cdr x)) (size x)))
+                            'nil))
+                    'nil))
+       ((E Q) (size/car x))
+       ((E A E) (size/cdr x))
+       ((E A) (if-same (ctx? (car x)) 't))
+       ((E) (if-true 't 'nil))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'defun.ctx?)
+
 ;; テスト結果
 
 (my/test/result)
