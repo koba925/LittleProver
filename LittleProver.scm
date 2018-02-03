@@ -868,6 +868,39 @@
      ((1) (mucha 't 'nil)))))
  '(equal 'nil 'nil))
 
+(defun dethm.if/natp/size ()
+  (J-Bob/define (dethm.ctx?/sub)
+    '(((dethm if/natp/size (x a b)
+         (equal (if (natp (size x)) a b) a))
+       nil
+       ((1 Q) (natp/size x))
+       ((1) (if-true a b))
+       (() (equal-same a))))))
+
+(my/test/define 'dethm.if/natp/size)
+
+(defun defun.member? ()
+  (J-Bob/define (dethm.if/natp/size)
+    '(((defun member? (x ys)
+         (if (atom ys)
+             'nil
+             (if (equal x (car ys))
+                 't
+                 (member? x (cdr ys)))))
+       (size ys)
+       (() (if/natp/size ys
+                         (if (atom ys)
+                             't
+                             (if (equal x (car ys))
+                                 't
+                                 (< (size (cdr ys)) (size ys))))
+                         'nil))
+       ((E E) (size/cdr ys))
+       ((E) (if-same (equal x (car ys)) 't))
+       (() (if-same (atom ys) 't))))))
+
+(my/test/define 'defun.member?)
+
 ;; テスト結果
 
 (my/test/result)
