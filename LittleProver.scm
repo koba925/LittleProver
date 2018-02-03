@@ -907,5 +907,21 @@
 
 ;; 作業エリア
 
-
-
+(J-Bob/prove (defun.member?)
+  '(((defun set? (xs)
+       (if (atom xs)
+           't
+           (if (member? (car xs) (cdr xs))
+               'nil
+               (set? (cdr xs)))))
+     (size xs)
+     (() (if/natp/size xs
+                       (if (atom xs)
+                           't
+                           (if (member? (car xs) (cdr xs))
+                               't
+                               (< (size (cdr xs)) (size xs))))
+                       'nil))
+     ((E E) (size/cdr xs))
+     ((E) (if-same (member? (car xs) (cdr xs)) 't))
+     (() (if-same (atom xs) 't)))))
