@@ -947,6 +947,14 @@
 
 (my/test/define 'defun.add-atoms)
 
+(defun defun.atoms ()
+  (J-Bob/define (defun.add-atoms)
+    '(((defun atoms (x)
+         (add-atoms x '()))
+       nil))))
+
+(my/test/define 'defun.atoms)
+
 ;; テスト結果
 
 (my/test/result)
