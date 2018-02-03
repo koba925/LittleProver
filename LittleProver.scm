@@ -901,27 +901,55 @@
 
 (my/test/define 'defun.member?)
 
+(defun defun.set? ()
+  (J-Bob/define (defun.member?)
+    '(((defun set? (xs)
+         (if (atom xs)
+             't
+             (if (member? (car xs) (cdr xs))
+                 'nil
+                 (set? (cdr xs)))))
+       (size xs)
+       (() (if/natp/size xs
+                         (if (atom xs)
+                             't
+                             (if (member? (car xs) (cdr xs))
+                                 't
+                                 (< (size (cdr xs)) (size xs))))
+                         'nil))
+       ((E E) (size/cdr xs))
+       ((E) (if-same (member? (car xs) (cdr xs)) 't))
+       (() (if-same (atom xs) 't))))))
+
+(my/test/define 'defun.set?)
+
+(defun defun.add-atoms ()
+  (J-Bob/define (defun.set?)
+    '(((defun add-atoms (x ys)
+         (if (atom x)
+             (if (member? x ys)
+                 ys
+                 (cons x ys))
+             (add-atoms (car x)
+                        (add-atoms (cdr x) ys))))
+       (size x)
+       (() (if/natp/size x
+                         (if (atom x)
+                             't
+                             (if (< (size (car x)) (size x))
+                                 (< (size (cdr x)) (size x))
+                                 'nil))
+                         'nil))
+       ((E Q) (size/car x))
+       ((E A) (size/cdr x))
+       ((E) (if-true 't 'nil))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'defun.add-atoms)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
 
-(J-Bob/prove (defun.member?)
-  '(((defun set? (xs)
-       (if (atom xs)
-           't
-           (if (member? (car xs) (cdr xs))
-               'nil
-               (set? (cdr xs)))))
-     (size xs)
-     (() (if/natp/size xs
-                       (if (atom xs)
-                           't
-                           (if (member? (car xs) (cdr xs))
-                               't
-                               (< (size (cdr xs)) (size xs))))
-                       'nil))
-     ((E E) (size/cdr xs))
-     ((E) (if-same (member? (car xs) (cdr xs)) 't))
-     (() (if-same (atom xs) 't)))))
