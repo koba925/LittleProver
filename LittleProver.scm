@@ -4,7 +4,7 @@
 (load "myprelude.scm")
 (load "util.scm")
 
-; 1 いつものゲームにルールを
+;; 1 いつものゲームにルールを
 
 (my/test
  "chapter1.example1"
@@ -616,6 +616,8 @@
 
 (my/test/define 'dethm.memb?/remb2)
 
+;; 6 最後まで考え抜くのです
+
 (defun dethm.memb?/remb ()
   (J-Bob/define (dethm.memb?/remb2)
     '(((dethm memb?/remb (xs)
@@ -667,6 +669,8 @@
        (() (if-same (atom xs) 't))))))
 
 (my/test/define 'dethm.memb?/remb)
+
+;; 7 びっくりスター!
 
 (defun defun.ctx? ()
   (J-Bob/define (dethm.memb?/remb)
@@ -868,6 +872,8 @@
      ((1) (mucha 't 'nil)))))
  '(equal 'nil 'nil))
 
+;; 8 これがルールです
+
 (defun dethm.if/natp/size ()
   (J-Bob/define (dethm.ctx?/sub)
     '(((dethm if/natp/size (x a b)
@@ -955,9 +961,173 @@
 
 (my/test/define 'defun.atoms)
 
+;; 9 ルールを変えるには
+
+; これは失敗
+;(J-Bob/prove (defun.atoms)
+;  '(((dethm set?/add-atoms (a)
+;       (equal (set? (add-atoms a '())) 't))
+;     (list-induction a)
+;     ((E A A 1 1) (add-atoms a '())))))
+
+(defun defun.flatten-induction ()
+  (J-Bob/define (defun.atoms)
+    '(((defun flatten-induction (x ys)
+         (if (atom x)
+             (cons x ys)
+             (flatten-induction (car x)
+                                (flatten-induction (cdr x) ys))))
+       (size x)
+       (() (if/natp/size x
+                         (if (atom x)
+                             't
+                             (if (< (size (car x)) (size x))
+                                 (< (size (cdr x)) (size x))
+                                 'nil))
+                         'nil))
+       ((E Q) (size/car x))
+       ((E A) (size/cdr x))
+       ((E) (if-true 't 'nil))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'defun.flatten-induction)
+
+; 想定通りにならない
+
+;(J-Bob/prove (defun.flatten-induction)
+;  '(((dethm set?/add-atoms (a bs)
+;       (if (set? bs)
+;           (equal (set? (add-atoms a bs)) 't)
+;           't))
+;     (flatten-induction a bs))))
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
+
+(J-Bob/prove (defun.atoms)
+  '(((dethm set?/t (xs)
+       (if (set? xs)
+           (equal (set? xs) 't)
+           't))
+     nil)
+    ((dethm set?/nil (xs)
+       (if (set? xs)
+           't
+           (equal (set? xs) 'nil)))
+     nil)
+    ; ((dethm set?/t-nil (xs)
+    ;    (if (set? xs)
+    ;        (equal (set? xs) 't)
+    ;        (equal (set? xs) 'nil)))
+    ;  nil)
+    ((dethm set?/add-atoms (a bs)
+       (if (set? bs)
+           (equal (set? (add-atoms a bs)) 't)
+           't))
+     (add-atoms a bs)
+     ((A A 1 1) (add-atoms a bs))
+     ((A A 1 1) (if-nest-A (atom a)
+                           (if (member? a bs) bs (cons a bs))
+                           (add-atoms (car a) (add-atoms (cdr a) bs))))
+     ((A A 1) (if-same (member? a bs)
+                       (set? (if (member? a bs) bs (cons a bs)))))
+     ((A A 1 A 1) (if-nest-A (member? a bs) bs (cons a bs)))
+     ((A A 1 E 1) (if-nest-E (member? a bs) bs (cons a bs)))
+     ((A A 1 A) (set?/t bs))
+     ((A A 1 E) (set? (cons a bs)))
+     ((A A 1 E Q) (atom/cons a bs))
+     ((A A 1 E) (if-false 't (if (member? (car (cons a bs)) (cdr (cons a bs)))
+                                 'nil
+                                 (set? (cdr (cons a bs))))))
+     ((A A 1 E Q 1) (car/cons a bs))
+     ((A A 1 E Q 2) (cdr/cons a bs))
+     ((A A 1 E E 1) (cdr/cons a bs))
+     ((A A 1 E E) (set?/t bs))
+     ((A A 1 E) (if-nest-E (member? a bs) 'nil 't))
+     ((A A 1) (if-same (member? a bs) 't))
+     ((A A) (equal 't 't))
+     ((A) (if-same (set? bs) 't))
+     ((E) (if-same (set? bs)
+                   (if (if (set? (add-atoms (cdr a) bs))
+                           (equal (set? (add-atoms (car a) (add-atoms (cdr a) bs)))
+                                  't)
+                           't)
+                       (if (if (set? bs)
+                               (equal (set? (add-atoms (cdr a) bs)) 't)
+                               't)
+                           (if (set? bs)
+                               (equal (set? (add-atoms a bs)) 't)
+                               't)
+                           't)
+                       't)))
+     ((E A A Q) (if-nest-A (set? bs) (equal (set? (add-atoms (cdr a) bs)) 't) 't))
+     ((E E A Q) (if-nest-E (set? bs) (equal (set? (add-atoms (cdr a) bs)) 't) 't))
+     ((E E A) (if-true (if (set? bs) (equal (set? (add-atoms a bs)) 't) 't) 't))
+     ((E E A) (if-nest-E (set? bs) (equal (set? (add-atoms a bs)) 't) 't))
+     ((E A A A) (if-nest-A (set? bs) (equal (set? (add-atoms a bs)) 't) 't))
+     ((E E) (if-same (if (set? (add-atoms (cdr a) bs))
+                         (equal (set? (add-atoms (car a) (add-atoms (cdr a) bs)))
+                                't)
+                         't)
+                     't))
+     ((E A) (if-same (set? (add-atoms (cdr a) bs))
+                     (if (if (set? (add-atoms (cdr a) bs))
+                             (equal (set? (add-atoms (car a)
+                                                     (add-atoms (cdr a) bs)))
+                                    't)
+                             't)
+                         (if (equal (set? (add-atoms (cdr a) bs)) 't)
+                             (equal (set? (add-atoms a bs)) 't)
+                             't)
+                         't)))
+     ((E A A Q) (if-nest-A (set? (add-atoms (cdr a) bs))
+                           (equal (set? (add-atoms (car a)
+                                                   (add-atoms (cdr a) bs)))
+                                  't)
+                           't))
+     ((E A E Q) (if-nest-E (set? (add-atoms (cdr a) bs))
+                           (equal (set? (add-atoms (car a)
+                                                   (add-atoms (cdr a) bs)))
+                                  't)
+                           't))
+     ((E A E) (if-true (if (equal (set? (add-atoms (cdr a) bs)) 't)
+                           (equal (set? (add-atoms a bs)) 't)
+                           't)
+                       't))
+     ((E A A A Q 1) (set?/t (add-atoms (cdr a) bs)))
+     ((E A E Q 1) (set?/nil (add-atoms (cdr a) bs)))
+     ; ((E A A A Q 1) (set?/t-nil (add-atoms (cdr a) bs)))
+     ; ((E A E Q 1) (set?/t-nil (add-atoms (cdr a) bs)))
+     ((E A A A Q) (equal 't 't))
+     ((E A A A) (if-true (equal (set? (add-atoms a bs)) 't) 't))
+     ((E A E Q) (equal 'nil 't))
+     ((E A E) (if-false (equal (set? (add-atoms a bs)) 't) 't))
+     ((E A A A 1 1) (add-atoms a bs))
+     ((E A A A 1 1) (if-nest-E (atom a)
+                               (if (member? a bs) bs (cons a bs))
+                               (add-atoms (car a)
+                                          (add-atoms (cdr a) bs))))
+     ((E A A A 1) (equal-if (set? (add-atoms (car a) (add-atoms (cdr a) bs))) 't))
+     ((E A A A) (equal 't 't))
+     ((E A A) (if-same (equal (set? (add-atoms (car a) (add-atoms (cdr a) bs))) 't) 't))
+     ((E A) (if-same (set? (add-atoms (cdr a) bs)) 't))
+     ((E) (if-same (set? bs) 't))
+     (() (if-same (atom a) 't)))
+    ((dethm set?/atoms (a)
+       (equal (set? (atoms a)) 't))
+     nil
+     ((1 1) (atoms a))
+     (() (if-true (equal (set? (add-atoms a '())) 't) 't))
+     ((Q) (if-true 't (if (member? (car '()) (cdr '()))
+                          'nil
+                          (set? (cdr '())))))
+     ((Q Q) (atom '()))
+     ((Q) (set? '()))
+     ((A 1) (set?/add-atoms a '()))
+     ((A) (equal 't 't))
+     (() (if-same (set? '()) 't))
+     )))
 
