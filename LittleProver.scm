@@ -1294,233 +1294,291 @@
 
 (my/test/define 'dethm.set?/atoms)
 
+(my/test
+ "chapter9.set?/t-nil"
+ (J-Bob/prove (defun.atoms)
+   '(((dethm set?/t-nil (xs)
+        (if (set? xs)
+            (equal (set? xs) 't)
+            (equal (set? xs) 'nil)))
+      (list-induction xs)
+
+      ; 証明すべき主張
+      ; (if (atom xs)
+      ;     (if (set? xs)
+      ;         (equal (set? xs) 't)
+      ;         (equal (set? xs) 'nil))
+      ;     (if (if (set? (cdr xs))
+      ;             (equal (set? (cdr xs)) 't)
+      ;             (equal (set? (cdr xs)) 'nil))
+      ;         (if (set? xs)
+      ;             (equal (set? xs) 't)
+      ;             (equal (set? xs) 'nil))
+      ;         't))
+     
+      ;; A部から
+     
+      ; (set? xs)を展開
+      ; どの(set?xs)から展開するかはあんまり気にしていない
+      ((A Q) (set? xs))
+
+      ; 整理
+      ((A Q) (if-nest-A (atom xs)
+                        't
+                        (if (member? (car xs) (cdr xs))
+                            'nil
+                            (set? (cdr xs)))))
+      ((A) (if-true (equal (set? xs) 't)
+                    (equal (set? xs) 'nil)))
+
+      ; (set? xs)を展開
+      ((A 1) (set? xs))
+
+      ; 整理
+      ((A 1) (if-nest-A (atom xs)
+                        't
+                        (if (member? (car xs) (cdr xs))
+                            'nil
+                            (set? (cdr xs)))))
+      ((A) (equal 't 't))
+
+      ; 現在の主張
+      ; (if (atom xs)
+      ;     't
+      ;     (if (if (set? (cdr xs))
+      ;             (equal (set? (cdr xs)) 't)
+      ;             (equal (set? (cdr xs)) 'nil))
+      ;         (if (set? xs)
+      ;             (equal (set? xs) 't)
+      ;             (equal (set? xs) 'nil))
+      ;         't))
+     
+      ;; E部
+     
+      ; 帰納法の前提となる部分には手をつけないでその内側から
+
+      ; (set? xs)を展開
+      ((E A Q) (set? xs))
+     
+      ; 整理
+      ((E A Q) (if-nest-E (atom xs)
+                          't
+                          (if (member? (car xs) (cdr xs))
+                              'nil
+                              (set? (cdr xs)))))
+
+      ; (set? xs)を展開
+      ((E A A 1) (set? xs))
+
+      ; 整理
+      ((E A A 1) (if-nest-E (atom xs)
+                            't
+                            (if (member? (car xs) (cdr xs))
+                                'nil
+                                (set? (cdr xs)))))
+
+      ; (set? xs)を展開
+      ((E A E 1) (set? xs))
+
+      ; 整理
+      ((E A E 1) (if-nest-E (atom xs)
+                            't
+                            (if (member? (car xs) (cdr xs))
+                                'nil
+                                (set? (cdr xs)))))
+
+      ; 現在の主張
+      ; (if (atom xs)
+      ;     't
+      ;     (if (if (set? (cdr xs))
+      ;             (equal (set? (cdr xs)) 't)
+      ;             (equal (set? (cdr xs)) 'nil))
+      ;         (if (if (member? (car xs) (cdr xs)) 'nil (set? (cdr xs)))
+      ;             (equal (if (member? (car xs) (cdr xs))
+      ;                        'nil
+      ;                        (set? (cdr xs))) 't)
+      ;             (equal (if (member? (car xs) (cdr xs))
+      ;                        'nil
+      ;                        (set? (cdr xs))) 'nil))
+      ;         't))
+
+      ; (member? (car xs) (cdr xs))で持ち上げ
+      ((E A) (if-same (member? (car xs) (cdr xs))
+                      (if (if (member? (car xs) (cdr xs))
+                              'nil
+                              (set? (cdr xs)))
+                          (equal (if (member? (car xs) (cdr xs))
+                                     'nil
+                                     (set? (cdr xs))) 't)
+                          (equal (if (member? (car xs) (cdr xs))
+                                     'nil
+                                     (set? (cdr xs))) 'nil))))
+
+      ; (E A A)の整理
+      ((E A A Q) (if-nest-A (member? (car xs) (cdr xs))
+                            'nil
+                            (set? (cdr xs))))
+      ((E A A) (if-false (equal (if (member? (car xs) (cdr xs))
+                                    'nil
+                                    (set? (cdr xs))) 't)
+                         (equal (if (member? (car xs) (cdr xs))
+                                    'nil
+                                    (set? (cdr xs))) 'nil)))
+      ((E A A 1) (if-nest-A (member? (car xs) (cdr xs))
+                            'nil
+                            (set? (cdr xs))))
+      ((E A A) (equal 'nil 'nil))
+
+      ; (E A E)の整理
+      ((E A E Q) (if-nest-E (member? (car xs) (cdr xs))
+                            'nil
+                            (set? (cdr xs))))
+      ((E A E A 1) (if-nest-E (member? (car xs) (cdr xs))
+                              'nil
+                              (set? (cdr xs))))
+      ((E A E E 1) (if-nest-E (member? (car xs) (cdr xs))
+                              'nil
+                              (set? (cdr xs))))
+
+      ; 持ち上げ完了
+
+      ; 現在の主張
+      ; (if (atom xs)
+      ;     't
+      ;     (if (if (set? (cdr xs))
+      ;             (equal (set? (cdr xs)) 't)
+      ;             (equal (set? (cdr xs)) 'nil))
+      ;         (if (member? (car xs) (cdr xs))
+      ;             't
+      ;             (if (set? (cdr xs))
+      ;                 (equal (set? (cdr xs)) 't)
+      ;                 (equal (set? (cdr xs)) 'nil)))
+      ;         't))
+
+      ; (set? (cdr xs))で持ち上げ開始
+      ((E) (if-same (set? (cdr xs))
+                    (if (if (set? (cdr xs))
+                            (equal (set? (cdr xs)) 't)
+                            (equal (set? (cdr xs)) 'nil))
+                        (if (member? (car xs) (cdr xs))
+                            't
+                            (if (set? (cdr xs))
+                                (equal (set? (cdr xs)) 't)
+                                (equal (set? (cdr xs)) 'nil)))
+                        't)))
+
+      ; 整理
+      ((E A Q) (if-nest-A (set? (cdr xs))
+                          (equal (set? (cdr xs)) 't)
+                          (equal (set? (cdr xs)) 'nil)))
+      ((E A A E) (if-nest-A (set? (cdr xs))
+                            (equal (set? (cdr xs)) 't)
+                            (equal (set? (cdr xs)) 'nil)))
+      ((E E Q) (if-nest-E (set? (cdr xs))
+                          (equal (set? (cdr xs)) 't)
+                          (equal (set? (cdr xs)) 'nil)))
+      ((E E A E) (if-nest-E (set? (cdr xs))
+                            (equal (set? (cdr xs)) 't)
+                            (equal (set? (cdr xs)) 'nil)))
+
+      ; 持ち上げ完了
+
+      ; 現在の主張
+      ; (if (atom xs)
+      ;     't
+      ;     (if (set? (cdr xs))
+      ;         (if (equal (set? (cdr xs)) 't)
+      ;             (if (member? (car xs) (cdr xs))
+      ;                 't
+      ;                 (equal (set? (cdr xs)) 't)) 't)
+      ;         (if (equal (set? (cdr xs)) 'nil)
+      ;             (if (member? (car xs) (cdr xs))
+      ;                 't
+      ;                 (equal (set? (cdr xs)) 'nil)) 't)))
+
+      ; equal-ifが使える形になった
+     
+      ; (E A)から
+      ((E A A E 1) (equal-if (set? (cdr xs)) 't))
+     
+      ; 整理
+      ((E A A E) (equal 't 't))
+      ((E A A) (if-same (member? (car xs) (cdr xs)) 't))
+      ((E A) (if-same (equal (set? (cdr xs)) 't) 't))
+
+      ; (E E)も
+      ((E E A E 1) (equal-if (set? (cdr xs)) 'nil))
+
+      ; 整理
+      ((E E A E) (equal 'nil 'nil))
+      ((E E A) (if-same (member? (car xs) (cdr xs)) 't))
+      ((E E) (if-same (equal (set? (cdr xs)) 'nil) 't))
+
+      ; 現在の主張
+      ; (if (atom xs) 't (if (set? (cdr xs)) 't 't))
+
+      ((E) (if-same (set? (cdr xs)) 't))
+      (() (if-same (atom xs) 't))
+
+      ; 現在の主張
+      ; 't
+      )))
+ ''t)
+
+;; 10 いつかはスターで一直線
+
+(defun dethm.rotate/cons ()
+  (J-Bob/define (dethm.set?/atoms)
+    '(((defun rotate (x)
+         (cons (car (car x))
+               (cons (cdr (car x)) (cdr x))))
+       nil)
+      ((dethm rotate/cons (x y z)
+         (equal (rotate (cons (cons x y) z))
+                (cons x (cons y z))))
+       nil
+       ((1) (rotate (cons (cons x y) z)))
+       ((1 1 1) (car/cons (cons x y) z))
+       ((1 1) (car/cons x y))
+       ((1 2 1 1) (car/cons (cons x y) z))
+       ((1 2 1) (cdr/cons x y))
+       ((1 2 2) (cdr/cons (cons x y) z))
+       (() (equal-same (cons x (cons y z))))))))
+
+(my/test/define 'dethm.rotate/cons)
+
+;うまくいかない
+;(J-Bob/prove (dethm.rotate/cons)
+;  '(((defun align (x)
+;       (if (atom x)
+;           x
+;           (if (atom (car x))
+;               (cons (car x) (align (cdr x)))
+;               (align (rotate x)))))
+;     (size x)
+;     (() (if/natp/size x
+;                       (if (atom x)
+;                           't
+;                           (if (atom (car x))
+;                               (< (size (cdr x)) (size x))
+;                               (< (size (rotate x)) (size x))))
+;                       'nil))
+;     ((E A) (size/cdr x))
+;     ((E E 1 1 1) (cons/car+cdr x))
+;     ((E E 2 1) (cons/car+cdr x))
+;     ((E E 1 1 1 1) (cons/car+cdr (car x)))
+;     ((E E 2 1 1) (cons/car+cdr (car x)))
+;     ((E E 1 1) (rotate/cons (car (car x)) (cdr (car x)) (cdr x))))))
+;;(if (atom x)
+;;    't
+;;    (if (atom (car x))
+;;        't
+;;        (< (size (cons (car (car x)) (cons (cdr (car x)) (cdr x))))
+;;           (size (cons (cons (car (car x)) (cdr (car x))) (cdr x))))))
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
-
-(J-Bob/prove (defun.atoms)
-  '(((dethm set?/t-nil (xs)
-       (if (set? xs)
-           (equal (set? xs) 't)
-           (equal (set? xs) 'nil)))
-     (list-induction xs)
-
-     ; 証明すべき主張
-     ; (if (atom xs)
-     ;     (if (set? xs)
-     ;         (equal (set? xs) 't)
-     ;         (equal (set? xs) 'nil))
-     ;     (if (if (set? (cdr xs))
-     ;             (equal (set? (cdr xs)) 't)
-     ;             (equal (set? (cdr xs)) 'nil))
-     ;         (if (set? xs)
-     ;             (equal (set? xs) 't)
-     ;             (equal (set? xs) 'nil))
-     ;         't))
-     
-     ;; A部から
-     ; (set? xs)を展開
-     ; どの(set?xs)から展開するかはあんまり気にしていない
-     ((A Q) (set? xs))
-     ; 整理
-     ((A Q) (if-nest-A (atom xs)
-                       't
-                       (if (member? (car xs) (cdr xs))
-                           'nil
-                           (set? (cdr xs)))))
-     ((A) (if-true (equal (set? xs) 't)
-                   (equal (set? xs) 'nil)))
-     ; (set? xs)を展開
-     ((A 1) (set? xs))
-     ; 整理
-     ((A 1) (if-nest-A (atom xs)
-                       't
-                       (if (member? (car xs) (cdr xs))
-                           'nil
-                           (set? (cdr xs)))))
-     ((A) (equal 't 't))
-
-     ; 現在の主張
-     ; (if (atom xs)
-     ;     't
-     ;     (if (if (set? (cdr xs))
-     ;             (equal (set? (cdr xs)) 't)
-     ;             (equal (set? (cdr xs)) 'nil))
-     ;         (if (set? xs)
-     ;             (equal (set? xs) 't)
-     ;             (equal (set? xs) 'nil))
-     ;         't))
-     
-     ;; E部
-     ; 帰納法の前提となる部分には手をつけないでその内側から
-
-     ; (set? xs)を展開
-     ((E A Q) (set? xs))
-     
-     ; 整理
-     ((E A Q) (if-nest-E (atom xs)
-                         't
-                         (if (member? (car xs) (cdr xs))
-                             'nil
-                             (set? (cdr xs)))))
-
-     ; (set? xs)を展開
-     ((E A A 1) (set? xs))
-
-     ; 整理
-     ((E A A 1) (if-nest-E (atom xs)
-                           't
-                           (if (member? (car xs) (cdr xs))
-                               'nil
-                               (set? (cdr xs)))))
-
-     ; (set? xs)を展開
-     ((E A E 1) (set? xs))
-
-     ; 整理
-     ((E A E 1) (if-nest-E (atom xs)
-                           't
-                           (if (member? (car xs) (cdr xs))
-                               'nil
-                               (set? (cdr xs)))))
-
-     ; 現在の主張
-     ; (if (atom xs)
-     ;     't
-     ;     (if (if (set? (cdr xs))
-     ;             (equal (set? (cdr xs)) 't)
-     ;             (equal (set? (cdr xs)) 'nil))
-     ;         (if (if (member? (car xs) (cdr xs)) 'nil (set? (cdr xs)))
-     ;             (equal (if (member? (car xs) (cdr xs))
-     ;                        'nil
-     ;                        (set? (cdr xs))) 't)
-     ;             (equal (if (member? (car xs) (cdr xs))
-     ;                        'nil
-     ;                        (set? (cdr xs))) 'nil))
-     ;         't))
-
-     ; (member? (car xs) (cdr xs))で持ち上げ
-     ((E A) (if-same (member? (car xs) (cdr xs))
-                     (if (if (member? (car xs) (cdr xs))
-                             'nil
-                             (set? (cdr xs)))
-                         (equal (if (member? (car xs) (cdr xs))
-                                    'nil
-                                    (set? (cdr xs))) 't)
-                         (equal (if (member? (car xs) (cdr xs))
-                                    'nil
-                                    (set? (cdr xs))) 'nil))))
-
-     ; (E A A)の整理
-     ((E A A Q) (if-nest-A (member? (car xs) (cdr xs))
-                           'nil
-                           (set? (cdr xs))))
-     ((E A A) (if-false (equal (if (member? (car xs) (cdr xs))
-                                   'nil
-                                   (set? (cdr xs))) 't)
-                        (equal (if (member? (car xs) (cdr xs))
-                                   'nil
-                                   (set? (cdr xs))) 'nil)))
-     ((E A A 1) (if-nest-A (member? (car xs) (cdr xs))
-                           'nil
-                           (set? (cdr xs))))
-     ((E A A) (equal 'nil 'nil))
-
-     ; (E A E)の整理
-     ((E A E Q) (if-nest-E (member? (car xs) (cdr xs))
-                           'nil
-                           (set? (cdr xs))))
-     ((E A E A 1) (if-nest-E (member? (car xs) (cdr xs))
-                             'nil
-                             (set? (cdr xs))))
-     ((E A E E 1) (if-nest-E (member? (car xs) (cdr xs))
-                             'nil
-                             (set? (cdr xs))))
-
-     ; 持ち上げ完了
-
-     ; 現在の主張
-     ; (if (atom xs)
-     ;     't
-     ;     (if (if (set? (cdr xs))
-     ;             (equal (set? (cdr xs)) 't)
-     ;             (equal (set? (cdr xs)) 'nil))
-     ;         (if (member? (car xs) (cdr xs))
-     ;             't
-     ;             (if (set? (cdr xs))
-     ;                 (equal (set? (cdr xs)) 't)
-     ;                 (equal (set? (cdr xs)) 'nil)))
-     ;         't))
-
-     ; (set? (cdr xs))で持ち上げ開始
-     ((E) (if-same (set? (cdr xs))
-                   (if (if (set? (cdr xs))
-                           (equal (set? (cdr xs)) 't)
-                           (equal (set? (cdr xs)) 'nil))
-                       (if (member? (car xs) (cdr xs))
-                           't
-                           (if (set? (cdr xs))
-                               (equal (set? (cdr xs)) 't)
-                               (equal (set? (cdr xs)) 'nil)))
-                       't)))
-
-     ; 整理
-     ((E A Q) (if-nest-A (set? (cdr xs))
-                         (equal (set? (cdr xs)) 't)
-                         (equal (set? (cdr xs)) 'nil)))
-     ((E A A E) (if-nest-A (set? (cdr xs))
-                           (equal (set? (cdr xs)) 't)
-                           (equal (set? (cdr xs)) 'nil)))
-     ((E E Q) (if-nest-E (set? (cdr xs))
-                         (equal (set? (cdr xs)) 't)
-                         (equal (set? (cdr xs)) 'nil)))
-     ((E E A E) (if-nest-E (set? (cdr xs))
-                           (equal (set? (cdr xs)) 't)
-                           (equal (set? (cdr xs)) 'nil)))
-
-     ; 持ち上げ完了
-
-     ; 現在の主張
-     ; (if (atom xs)
-     ;     't
-     ;     (if (set? (cdr xs))
-     ;         (if (equal (set? (cdr xs)) 't)
-     ;             (if (member? (car xs) (cdr xs))
-     ;                 't
-     ;                 (equal (set? (cdr xs)) 't)) 't)
-     ;         (if (equal (set? (cdr xs)) 'nil)
-     ;             (if (member? (car xs) (cdr xs))
-     ;                 't
-     ;                 (equal (set? (cdr xs)) 'nil)) 't)))
-
-     ; equal-ifが使える形になった
-     
-     ; (E A)から
-     ((E A A E 1) (equal-if (set? (cdr xs)) 't))
-     
-     ; 整理
-     ((E A A E) (equal 't 't))
-     ((E A A) (if-same (member? (car xs) (cdr xs)) 't))
-     ((E A) (if-same (equal (set? (cdr xs)) 't) 't))
-
-     ; (E E)も
-     ((E E A E 1) (equal-if (set? (cdr xs)) 'nil))
-
-     ; 整理
-     ((E E A E) (equal 'nil 'nil))
-     ((E E A) (if-same (member? (car xs) (cdr xs)) 't))
-     ((E E) (if-same (equal (set? (cdr xs)) 'nil) 't))
-
-     ; 現在の主張
-     ; (if (atom xs) 't (if (set? (cdr xs)) 't 't))
-
-     ((E) (if-same (set? (cdr xs)) 't))
-     (() (if-same (atom xs) 't))
-
-     ; 現在の主張
-     ; 't
-     )))
-
 
