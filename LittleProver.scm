@@ -1576,6 +1576,45 @@
 ;;        (< (size (cons (car (car x)) (cons (cdr (car x)) (cdr x))))
 ;;           (size (cons (cons (car (car x)) (cdr (car x))) (cdr x))))))
 
+; やってみただけ
+;(J-Bob/prove (dethm.set?/atoms)
+;  '(((dethm size/cons (a b)
+;       (equal (size (cons a b)) (+ (+ (size a) (size b)) '1)))
+;     nil)
+;    ((dethm rotate/size (x)
+;       (equal (size (cons (car (car x)) (cons (cdr (car x)) (cdr x))))
+;              (size (cons (cons (car (car x)) (cdr (car x))) (cdr x)))))
+;     nil
+;     ((1) (size/cons (car (car x)) (cons (cdr (car x)) (cdr x))))
+;     ((1 1 2) (size/cons (cdr (car x)) (cdr x)))
+;     ((2) (size/cons (cons (car (car x)) (cdr (car x))) (cdr x)))
+;     ((2 1 1) (size/cons (car (car x)) (cdr (car x))))
+;
+;     ; (equal
+;     ;  (+ (+ (size (car (car x))) (+ (+ (size (cdr (car x))) (size (cdr x))) '1)) '1)
+;     ;  (+ (+ (+ (+ (size (car (car x))) (size (cdr (car x)))) '1) (size (cdr x))) '1))
+;
+;     ((1 1 2) (associate-+ (size (cdr (car x))) (size (cdr x)) '1))
+;     ((1 1 2 2) (commute-+ (size (cdr x)) '1))
+;     ((1 1 2) (associate-+ (size (cdr (car x))) '1 (size (cdr x))))
+;     ((1 1) (associate-+ (size (car (car x)))
+;                         (+ (size (cdr (car x))) '1)
+;                         (size (cdr x))))
+;     ((1 1 1) (associate-+ (size (car (car x)))
+;                         (size (cdr (car x)))
+;                         '1))
+;
+;     ; (equal
+;     ;  (+ (+ (+ (+ (size (car (car x))) (size (cdr (car x)))) '1) (size (cdr x))) '1)
+;     ;  (+ (+ (+ (+ (size (car (car x))) (size (cdr (car x)))) '1) (size (cdr x))) '1))
+;
+;     (() (equal-same (+ (+ (+ (+ (size (car (car x)))
+;                                 (size (cdr (car x))))
+;                              '1)
+;                           (size (cdr x)))
+;                        '1)))
+;     )))
+
 ;; テスト結果
 
 (my/test/result)
