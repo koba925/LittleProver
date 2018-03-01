@@ -1615,9 +1615,33 @@
 ;                        '1)))
 ;     )))
 
+(defun defun.wt ()
+  (J-Bob/define (dethm.rotate/cons)
+    '(((defun wt (x)
+         (if (atom x)
+             '1
+             (+ (+ (wt (car x)) (wt (car x)))
+                (wt (cdr x)))))
+       (size x)
+       (() (if/natp/size x
+                         (if (atom x)
+                             't
+                             (if (< (size (car x)) (size x))
+                                 (< (size (cdr x)) (size x))
+                                 'nil))
+                         'nil))
+       ((E A) (size/cdr x))
+       ((E Q) (size/car x))
+       ((E) (if-true 't 'nil))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'defun.wt)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
 
+
+  
