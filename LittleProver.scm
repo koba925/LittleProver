@@ -1643,5 +1643,57 @@
 
 ;; 作業エリア
 
+;(J-Bob/prove (defun.wt)
+;  '(((defun align (x)
+;       (if (atom x)
+;           x
+;           (if (atom (car x))
+;               (cons (car x) (align (cdr x)))
+;               (align (rotate x)))))
+;     (wt x)
+;     )))
 
-  
+(J-Bob/prove (defun.wt)
+  '(((dethm natp/wt (x)
+       (equal (natp (wt x)) 't))
+     (star-induction x)
+
+     ; (if (atom x)
+     ;     (equal (natp (wt x)) 't)
+     ;     (if (equal (natp (wt (car x))) 't)
+     ;         (if (equal (natp (wt (cdr x))) 't)
+     ;             (equal (natp (wt x)) 't)
+     ;             't)
+     ;         't))
+
+     ;; A部から
+
+     ; wtを展開して整理
+     ((A 1 1) (wt x))
+     ((A 1 1) (if-nest-A (atom x)
+                         '1
+                         (+ (+ (wt (car x)) (wt (car x))) (wt (cdr x)))))
+     ((A 1) (natp '1))
+     ((A) (equal 't 't))
+
+     ;; E部
+
+     ; 前提の内側のwtを展開して整理
+     ((E A A 1 1) (wt x))
+     ((E A A 1 1) (if-nest-E (atom x)
+                             '1
+                             (+ (+ (wt (car x)) (wt (car x)))
+                                (wt (cdr x)))))
+
+     ; (if (atom x)
+     ;     't
+     ;     (if (equal (natp (wt (car x))) 't)
+     ;         (if (equal (natp (wt (cdr x))) 't)
+     ;             (equal (natp (+ (+ (wt (car x)) (wt (car x)))
+     ;                             (wt (cdr x))))
+     ;                    't)
+     ;             't)
+     ;         't))
+
+     )))
+

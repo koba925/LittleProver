@@ -37,6 +37,7 @@
     (dethm size/cdr (x)
       (if (atom x) 't
           (equal (< (size (cdr x)) (size x)) 't)))
+    ; +と<についての公理
     (dethm associate-+ (a b c)
       (equal (+ (+ a b) c) (+ a (+ b c))))
     (dethm commute-+ (x y)
