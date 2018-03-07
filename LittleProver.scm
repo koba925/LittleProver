@@ -1637,13 +1637,270 @@
 
 (my/test/define 'defun.wt)
 
+(defun dethm.natp/wt ()
+  (J-Bob/define (defun.wt)
+    '(((dethm natp/wt (x)
+         (equal (natp (wt x)) 't))
+       (star-induction x)
+
+       ; (if (atom x)
+       ;     (equal (natp (wt x)) 't)
+       ;     (if (equal (natp (wt (car x))) 't)
+       ;         (if (equal (natp (wt (cdr x))) 't)
+       ;             (equal (natp (wt x)) 't)
+       ;             't)
+       ;         't))
+
+       ;; A部から
+
+       ; wtを展開して整理
+       ((A 1 1) (wt x))
+       ((A 1 1) (if-nest-A (atom x)
+                           '1
+                           (+ (+ (wt (car x)) (wt (car x))) (wt (cdr x)))))
+       ((A 1) (natp '1))
+       ((A) (equal 't 't))
+
+       ;; E部
+
+       ; 前提の内側のwtを展開して整理
+       ((E A A 1 1) (wt x))
+       ((E A A 1 1) (if-nest-E (atom x)
+                               '1
+                               (+ (+ (wt (car x)) (wt (car x)))
+                                  (wt (cdr x)))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (natp (wt (car x))) 't)
+       ;         (if (equal (natp (wt (cdr x))) 't)
+       ;             (equal (natp (+ (+ (wt (car x)) (wt (car x)))
+       ;                             (wt (cdr x))))
+       ;                    't)
+       ;             't)
+       ;         't))
+
+       ; (natp (wt (cdr x)))という前提を作る
+       ; まずは(if 't ... ...) という形を作って
+       ((E A A) (if-true (equal (natp (+ (+ (wt (car x)) (wt (car x)))
+                                         (wt (cdr x))))
+                                't)
+                         't))
+       ; 'tな式で'tを置き換える
+       ((E A A Q) (equal-if (natp (wt (cdr x))) 't))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (natp (wt (car x))) 't)
+       ;         (if (equal (natp (wt (cdr x))) 't)
+       ;             (if (natp (wt (cdr x)))              ; ここを作った
+       ;                 (equal (natp (+ (+ (wt (car x))
+       ;                                    (wt (car x)))
+       ;                                 (wt (cdr x))))
+       ;                        't)
+       ;                 't)
+       ;             't)
+       ;         't))
+
+       ; (natp (wt (car x)))という前提を作る
+       ((E A A) (if-true (if (natp (wt (cdr x)))
+                             (equal (natp (+ (+ (wt (car x)) (wt (car x)))
+                                             (wt (cdr x))))
+                                    't)
+                             't)
+                         't))
+       ((E A A Q) (equal-if (natp (wt (car x))) 't))
+
+       ; (natp (+ (wt (car x)) (wt (car x)))という前提を作る
+       ((E A A A) (if-true (if (natp (wt (cdr x)))
+                               (equal (natp (+ (+ (wt (car x))
+                                                  (wt (car x)))
+                                               (wt (cdr x))))
+                                      't)
+                               't)
+                           't))
+       ; (natp (wt (car x))という前提を使ってさらに新しい前提を入れる
+       ((E A A A Q) (natp/+ (wt (car x)) (wt (car x))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (natp (wt (car x))) 't)
+       ;         (if (equal (natp (wt (cdr x))) 't)
+       ;             (if (natp (wt (car x)))
+       ;                 (if (natp (+ (wt (car x)) (wt (car x))))
+       ;                     (if (natp (wt (cdr x)))
+       ;                         (equal (natp (+ (+ (wt (car x))
+       ;                                            (wt (car x)))
+       ;                                         (wt (cdr x))))
+       ;                                't)
+       ;                         't)
+       ;                     't)
+       ;                 't)
+       ;             't)
+       ;         't))
+
+       ((E A A A A A 1) (natp/+ (+ (wt (car x)) (wt (car x)))
+                                (wt (cdr x))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (natp (wt (car x))) 't)
+       ;         (if (equal (natp (wt (cdr x))) 't)
+       ;             (if (natp (wt (car x)))
+       ;                 (if (natp (+ (wt (car x)) (wt (car x))))
+       ;                     (if (natp (wt (cdr x)))
+       ;                         (equal 't 't)         ; よっしゃー
+       ;                         't)
+       ;                     't)
+       ;                 't)
+       ;             't)
+       ;         't))
+
+       ; 整理
+       ((E A A A A A) (equal 't 't))
+       ((E A A A A) (if-same (natp (wt (cdr x))) 't))
+       ((E A A A) (if-same (natp (+ (wt (car x)) (wt (car x))))
+                           't))
+       ((E A A) (if-same (natp (wt (car x))) 't))
+       ((E A) (if-same (equal (natp (wt (cdr x))) 't) 't))
+       ((E) (if-same (equal (natp (wt (car x))) 't) 't))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'dethm.natp/wt)
+
+(defun dethm.positive/wt ()
+  (J-Bob/define (dethm.natp/wt)
+    '(((dethm positive/wt (x)
+         (equal (< '0 (wt x)) 't))
+       (star-induction x)
+
+       ; (if (atom x)
+       ;     (equal (< '0 (wt x)) 't)
+       ;     (if (equal (< '0 (wt (car x))) 't)
+       ;         (if (equal (< '0 (wt (cdr x))) 't)
+       ;             (equal (< '0 (wt x)) 't)
+       ;             't)
+       ;         't))
+
+       ;; A部
+
+       ((A 1 2) (wt x))
+       ((A 1 2) (if-nest-A (atom x)
+                           '1
+                           (+ (+ (wt (car x)) (wt (car x)))
+                              (wt (cdr x)))))
+       ((A 1) (< '0 '1))
+       ((A) (equal 't 't))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (< '0 (wt (car x))) 't)
+       ;         (if (equal (< '0 (wt (cdr x))) 't)
+       ;             (equal (< '0 (wt x)) 't)
+       ;             't)
+       ;         't))
+
+       ;; E部
+
+       ; 前提の内側のwtから展開
+
+       ((E A A 1 2) (wt x))
+       ((E A A 1 2) (if-nest-E (atom x)
+                               '1
+                               (+ (+ (wt (car x)) (wt (car x)))
+                                  (wt (cdr x)))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (< '0 (wt (car x))) 't)
+       ;         (if (equal (< '0 (wt (cdr x))) 't)
+       ;             (equal (< '0
+       ;                       (+ (+ (wt (car x)) (wt (car x)))
+       ;                          (wt (cdr x))))
+       ;                    't)
+       ;             't)
+       ;         't))
+
+       ; (< '0 (wt (car x)))の前提を作る
+       ((E A A) (if-true (equal (< '0
+                                   (+ (+ (wt (car x))
+                                         (wt (car x)))
+                                      (wt (cdr x))))
+                                't)
+                         't))
+       ((E A A Q) (equal-if (< '0 (wt (car x))) 't))
+
+       ; (< '0 (+ (wt (car x)) (wt (car x))))の前提を作る
+       ((E A A A) (if-true (equal (< '0
+                                     (+ (+ (wt (car x))
+                                           (wt (car x)))
+                                        (wt (cdr x))))
+                                  't)
+                           't))
+       ((E A A A Q) (positives-+ (wt (car x)) (wt (car x))))
+
+       ; (< '0 (wt (cdr x)))の前提を作る
+       ((E A A A A) (if-true (equal (< '0
+                                       (+ (+ (wt (car x))
+                                             (wt (car x)))
+                                          (wt (cdr x))))
+                                    't)
+                             't))
+       ((E A A A A Q) (equal-if (< '0 (wt (cdr x))) 't))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (< '0 (wt (car x))) 't)
+       ;         (if (equal (< '0 (wt (cdr x))) 't)
+       ;             (if (< '0 (wt (car x)))
+       ;                 (if (< '0 (+ (wt (car x)) (wt (car x))))
+       ;                     (if (< '0 (wt (cdr x)))
+       ;                         (equal (< '0 (+ (+ (wt (car x))
+       ;                                            (wt (car x)))
+       ;                                         (wt (cdr x))))
+       ;                                't)
+       ;                         't)
+       ;                     't)
+       ;                 't)
+       ;             't)
+       ;         't))
+
+       ; 本丸
+       ((E A A A A A 1) (positives-+ (+ (wt (car x))
+                                        (wt (car x)))
+                                     (wt (cdr x))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (equal (< '0 (wt (car x))) 't)
+       ;         (if (equal (< '0 (wt (cdr x))) 't)
+       ;             (if (< '0 (wt (car x)))
+       ;                 (if (< '0 (+ (wt (car x)) (wt (car x))))
+       ;                     (if (< '0 (wt (cdr x)))
+       ;                         (equal 't 't)
+       ;                         't)
+       ;                     't)
+       ;                 't)
+       ;             't)
+       ;         't))
+
+       ; 整理
+       ((E A A A A A) (equal 't 't))
+       ((E A A A A) (if-same (< '0 (wt (cdr x))) 't))
+       ((E A A A) (if-same (< '0 (+ (wt (car x)) (wt (car x)))) 't))
+       ((E A A) (if-same (< '0 (wt (car x))) 't))
+       ((E A) (if-same (equal (< '0 (wt (cdr x))) 't) 't))
+       ((E) (if-same (equal (< '0 (wt (car x))) 't) 't))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'dethm.positive/wt)
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
 
-;(J-Bob/prove (defun.wt)
+;(J-Bob/prove (dethm.positive/wt)
 ;  '(((defun align (x)
 ;       (if (atom x)
 ;           x
@@ -1651,49 +1908,54 @@
 ;               (cons (car x) (align (cdr x)))
 ;               (align (rotate x)))))
 ;     (wt x)
+;     ((Q) (natp/wt x))
+;     (() (if-true (if (atom x)
+;                      't
+;                      (if (atom (car x))
+;                          (< (wt (cdr x)) (wt x))
+;                          (< (wt (rotate x)) (wt x))))
+;                  'nil))
+;
+;     ; (if (atom x)
+;     ;     't
+;     ;     (if (atom (car x))
+;     ;         (< (wt (cdr x)) (wt x))
+;     ;         (< (wt (rotate x)) (wt x))))
+;
+;     ((E A 2) (wt x))
+;     ((E A 2) (if-nest-E (atom x)
+;                         '1
+;                         (+ (+ (wt (car x)) (wt (car x)))
+;                            (wt (cdr x)))))
+;     
+;     ; (if (atom x)
+;     ;     't
+;     ;     (if (atom (car x))
+;     ;         (< (wt (cdr x))
+;     ;            (+ (+ (wt (car x)) (wt (car x)))
+;     ;               (wt (cdr x))))
+;     ;         (< (wt (rotate x)) (wt x))))
+;
+;     ;(wt (cdr x))をキャンセルする
+;     ((E A) (if-true (< (wt (cdr x))
+;                        (+ (+ (wt (car x)) (wt (car x)))
+;                           (wt (cdr x))))
+;                     't))
+;     ((E A Q) (natp/wt (cdr x))) 
+;     ((E A A 1) (identity-+ (wt (cdr x))))
+;     ((E A A) (common-addends-< '0
+;                                (+ (wt (car x)) (wt (car x)))
+;                                (wt (cdr x))))
+;     ((E A Q) (natp/wt (cdr x)))
+;     ((E A) (if-true (< '0 (+ (wt (car x)) (wt (car x)))) 't))
+;
+;     ; (if (atom x)
+;     ;     't
+;     ;     (if (atom (car x))
+;     ;         (< '0 (+ (wt (car x)) (wt (car x))))
+;     ;         (< (wt (rotate x)) (wt x))))
+;
 ;     )))
 
-(J-Bob/prove (defun.wt)
-  '(((dethm natp/wt (x)
-       (equal (natp (wt x)) 't))
-     (star-induction x)
 
-     ; (if (atom x)
-     ;     (equal (natp (wt x)) 't)
-     ;     (if (equal (natp (wt (car x))) 't)
-     ;         (if (equal (natp (wt (cdr x))) 't)
-     ;             (equal (natp (wt x)) 't)
-     ;             't)
-     ;         't))
-
-     ;; A部から
-
-     ; wtを展開して整理
-     ((A 1 1) (wt x))
-     ((A 1 1) (if-nest-A (atom x)
-                         '1
-                         (+ (+ (wt (car x)) (wt (car x))) (wt (cdr x)))))
-     ((A 1) (natp '1))
-     ((A) (equal 't 't))
-
-     ;; E部
-
-     ; 前提の内側のwtを展開して整理
-     ((E A A 1 1) (wt x))
-     ((E A A 1 1) (if-nest-E (atom x)
-                             '1
-                             (+ (+ (wt (car x)) (wt (car x)))
-                                (wt (cdr x)))))
-
-     ; (if (atom x)
-     ;     't
-     ;     (if (equal (natp (wt (car x))) 't)
-     ;         (if (equal (natp (wt (cdr x))) 't)
-     ;             (equal (natp (+ (+ (wt (car x)) (wt (car x)))
-     ;                             (wt (cdr x))))
-     ;                    't)
-     ;             't)
-     ;         't))
-
-     )))
 
