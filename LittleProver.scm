@@ -1894,68 +1894,256 @@
        (() (if-same (atom x) 't))))))
 
 (my/test/define 'dethm.positive/wt)
+
+(defun defun.align ()
+  (J-Bob/define (dethm.positive/wt)
+    '(((defun align (x)
+         (if (atom x)
+             x
+             (if (atom (car x))
+                 (cons (car x) (align (cdr x)))
+                 (align (rotate x)))))
+       (wt x)
+       ((Q) (natp/wt x))
+       (() (if-true (if (atom x)
+                        't
+                        (if (atom (car x))
+                            (< (wt (cdr x)) (wt x))
+                            (< (wt (rotate x)) (wt x))))
+                    'nil))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         (< (wt (cdr x)) (wt x))
+       ;         (< (wt (rotate x)) (wt x))))
+
+       ((E A 2) (wt x))
+       ((E A 2) (if-nest-E (atom x)
+                           '1
+                           (+ (+ (wt (car x)) (wt (car x)))
+                              (wt (cdr x)))))
+     
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         (< (wt (cdr x))
+       ;            (+ (+ (wt (car x)) (wt (car x)))
+       ;               (wt (cdr x))))
+       ;         (< (wt (rotate x)) (wt x))))
+
+       ;(wt (cdr x))をキャンセルする
+       ((E A) (if-true (< (wt (cdr x))
+                          (+ (+ (wt (car x)) (wt (car x)))
+                             (wt (cdr x))))
+                       't))
+       ((E A Q) (natp/wt (cdr x))) 
+       ((E A A 1) (identity-+ (wt (cdr x))))
+       ((E A A) (common-addends-< '0
+                                  (+ (wt (car x)) (wt (car x)))
+                                  (wt (cdr x))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         (if (natp (wt (cdr x)))
+       ;             (< '0 (+ (wt (car x)) (wt (car x))))
+       ;             't)
+       ;         (< (wt (rotate x)) (wt x))))
+
+       ; (natp (wt (cdr x))を(< '0 (wt (car x)))に書き換える
+       ((E A Q) (natp/wt (cdr x)))
+       ((E A Q) (positive/wt (car x)))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         (if (< '0 (wt (car x)))
+       ;             (< '0 (+ (wt (car x)) (wt (car x))))
+       ;             't)
+       ;         (< (wt (rotate x)) (wt x))))
+
+       ((E A A) (positives-+ (wt (car x)) (wt (car x))))
+       ((E A) (if-same (< '0 (wt (car x))) 't))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         't
+       ;         (< (wt (rotate x)) (wt x))))
+
+       ; 展開
+       ((E E 1 1) (rotate x))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         't
+       ;         (< (wt (cons (car (car x))
+       ;                      (cons (cdr (car x)) (cdr x))))
+       ;            (wt x))))
+
+       ; 展開
+     
+       ((E E 1) (wt (cons (car (car x))
+                          (cons (cdr (car x)) (cdr x)))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         't
+       ;         (<
+       ;          (if (atom (cons (car (car x)) (cons (cdr (car x)) (cdr x))))
+       ;              '1
+       ;              (+
+       ;               (+
+       ;                (wt (car (cons (car (car x)) (cons (cdr (car x)) (cdr x)))))
+       ;                (wt (car (cons (car (car x)) (cons (cdr (car x)) (cdr x))))))
+       ;               (wt (cdr (cons (car (car x)) (cons (cdr (car x)) (cdr x)))))))
+       ;          (wt x))))
+
+       ((E E 1 Q) (atom/cons (car (car x))
+                             (cons (cdr (car x)) (cdr x))))
+       ((E E 1) (if-false '1
+                          (+
+                           (+
+                            (wt (car (cons (car (car x)) (cons (cdr (car x)) (cdr x)))))
+                            (wt (car (cons (car (car x)) (cons (cdr (car x)) (cdr x))))))
+                           (wt (cdr (cons (car (car x)) (cons (cdr (car x)) (cdr x))))))))
+       ((E E 1 1 1 1) (car/cons (car (car x)) (cons (cdr (car x)) (cdr x))))
+       ((E E 1 1 2 1) (car/cons (car (car x)) (cons (cdr (car x)) (cdr x))))
+       ((E E 1 2 1) (cdr/cons (car (car x)) (cons (cdr (car x)) (cdr x))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         't
+       ;         (< (+ (+ (wt (car (car x)))
+       ;                  (wt (car (car x))))
+       ;               (wt (cons (cdr (car x)) (cdr x))))
+       ;            (wt x))))
+
+       ((E E 1 2) (wt (cons (cdr (car x)) (cdr x))))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         't
+       ;         (<
+       ;          (+
+       ;           (+ (wt (car (car x))) (wt (car (car x))))
+       ;           (if (atom (cons (cdr (car x)) (cdr x)))
+       ;               '1
+       ;               (+
+       ;                (+ (wt (car (cons (cdr (car x)) (cdr x)))) (wt (car (cons (cdr (car x)) (cdr x)))))
+       ;                (wt (cdr (cons (cdr (car x)) (cdr x)))))))
+       ;          (wt x))))
+
+       ((E E 1 2 Q) (atom/cons (cdr (car x)) (cdr x)))
+       ((E E 1 2) (if-false '1
+                            (+
+                             (+ (wt (car (cons (cdr (car x)) (cdr x))))
+                                (wt (car (cons (cdr (car x)) (cdr x)))))
+                             (wt (cdr (cons (cdr (car x)) (cdr x)))))))
+
+       ((E E 1 2 1 1 1) (car/cons (cdr (car x)) (cdr x)))
+       ((E E 1 2 1 2 1) (car/cons (cdr (car x)) (cdr x)))
+       ((E E 1 2 2 1) (cdr/cons (cdr (car x)) (cdr x)))
+
+       ; (if (atom x)
+       ;     't
+       ;     (if (atom (car x))
+       ;         't
+       ;         (<
+       ;          (+ (+ (wt (car (car x)))
+       ;                (wt (car (car x))))
+       ;             (+ (+ (wt (cdr (car x)))
+       ;                   (wt (cdr (car x))))
+       ;                (wt (cdr x))))
+       ;          (wt x))))
+
+       ((E E 2) (wt x))
+       ((E E 2) (if-nest-E (atom x)
+                           '1
+                           (+ (+ (wt (car x)) (wt (car x)))
+                              (wt (cdr x)))))
+
+       ; 60
+       ((E E 2 1 1) (wt (car x)))
+       ((E E 2 1 1) (if-nest-E (atom (car x))
+                               '1
+                               (+ (+ (wt (car (car x)))
+                                     (wt (car (car x))))
+                                  (wt (cdr (car x))))))
+       ((E E 2 1 2) (wt (car x)))
+       ((E E 2 1 2) (if-nest-E (atom (car x))
+                               '1
+                               (+ (+ (wt (car (car x)))
+                                     (wt (car (car x))))
+                                  (wt (cdr (car x))))))
+
+       ; 62
+       ((E E 1) (associate-+ (+ (wt (car (car x))) (wt (car (car x))))
+                             (+ (wt (cdr (car x))) (wt (cdr (car x))))
+                             (wt (cdr x))))
+
+       ; 63
+       ((E E) (common-addends-<
+               (+ (+ (wt (car (car x))) (wt (car (car x))))
+                  (+ (wt (cdr (car x))) (wt (cdr (car x)))))
+               (+ (+ (+ (wt (car (car x))) (wt (car (car x))))
+                     (wt (cdr (car x))))
+                  (+ (+ (wt (car (car x))) (wt (car (car x))))
+                     (wt (cdr (car x)))))
+               (wt (cdr x))))
+
+       ; 64
+       ((E E 1) (associate-+ (+ (wt (car (car x))) (wt (car (car x))))
+                             (wt (cdr (car x)))
+                             (wt (cdr (car x)))))
+       ((E E 1) (commute-+ (+ (+ (wt (car (car x))) (wt (car (car x))))
+                              (wt (cdr (car x))))
+                           (wt (cdr (car x)))))
+
+       ; 65
+       ((E E) (common-addends-< (wt (cdr (car x)))
+                                (+ (+ (wt (car (car x))) (wt (car (car x))))
+                                   (wt (cdr (car x))))
+                                (+ (+ (wt (car (car x))) (wt (car (car x))))
+                                   (wt (cdr (car x))))))
+
+       ; 66
+       ((E E) (if-true (< (wt (cdr (car x)))
+                          (+ (+ (wt (car (car x))) (wt (car (car x))))
+                             (wt (cdr (car x)))))
+                       't))
+       ((E E Q) (natp/wt (cdr (car x))))
+
+       ; 67
+       ((E E A 1) (identity-+ (wt (cdr (car x)))))
+
+       ; 68
+       ((E E A) (common-addends-< '0
+                                  (+ (wt (car (car x))) (wt (car (car x))))
+                                  (wt (cdr (car x)))))
+
+       ; 69
+       ((E E Q) (natp/wt (cdr (car x))))
+       ((E E Q) (positive/wt (car (car x))))
+
+       ;70
+       ((E E A) (positives-+ (wt (car (car x))) (wt (car (car x)))))
+
+       ;71
+       ((E E) (if-same (< '0 (wt (car (car x)))) 't))
+       ((E) (if-same (atom (car x)) 't))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'defun.align)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
-
-;(J-Bob/prove (dethm.positive/wt)
-;  '(((defun align (x)
-;       (if (atom x)
-;           x
-;           (if (atom (car x))
-;               (cons (car x) (align (cdr x)))
-;               (align (rotate x)))))
-;     (wt x)
-;     ((Q) (natp/wt x))
-;     (() (if-true (if (atom x)
-;                      't
-;                      (if (atom (car x))
-;                          (< (wt (cdr x)) (wt x))
-;                          (< (wt (rotate x)) (wt x))))
-;                  'nil))
-;
-;     ; (if (atom x)
-;     ;     't
-;     ;     (if (atom (car x))
-;     ;         (< (wt (cdr x)) (wt x))
-;     ;         (< (wt (rotate x)) (wt x))))
-;
-;     ((E A 2) (wt x))
-;     ((E A 2) (if-nest-E (atom x)
-;                         '1
-;                         (+ (+ (wt (car x)) (wt (car x)))
-;                            (wt (cdr x)))))
-;     
-;     ; (if (atom x)
-;     ;     't
-;     ;     (if (atom (car x))
-;     ;         (< (wt (cdr x))
-;     ;            (+ (+ (wt (car x)) (wt (car x)))
-;     ;               (wt (cdr x))))
-;     ;         (< (wt (rotate x)) (wt x))))
-;
-;     ;(wt (cdr x))をキャンセルする
-;     ((E A) (if-true (< (wt (cdr x))
-;                        (+ (+ (wt (car x)) (wt (car x)))
-;                           (wt (cdr x))))
-;                     't))
-;     ((E A Q) (natp/wt (cdr x))) 
-;     ((E A A 1) (identity-+ (wt (cdr x))))
-;     ((E A A) (common-addends-< '0
-;                                (+ (wt (car x)) (wt (car x)))
-;                                (wt (cdr x))))
-;     ((E A Q) (natp/wt (cdr x)))
-;     ((E A) (if-true (< '0 (+ (wt (car x)) (wt (car x)))) 't))
-;
-;     ; (if (atom x)
-;     ;     't
-;     ;     (if (atom (car x))
-;     ;         (< '0 (+ (wt (car x)) (wt (car x))))
-;     ;         (< (wt (rotate x)) (wt x))))
-;
-;     )))
-
-
 
