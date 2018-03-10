@@ -2141,9 +2141,130 @@
 
 (my/test/define 'defun.align)
 
+
+(defun dethm.align/align ()
+  (J-Bob/define (defun.align)
+    '(((dethm align/align (x)
+         (equal (align (align x)) (align x)))
+       (align x)
+
+       ;79
+
+       ; (if (atom x)
+       ;     (equal (align (align x)) (align x))
+       ;     (if (atom (car x))
+       ;         (if (equal (align (align (cdr x)))
+       ;                    (align (cdr x)))
+       ;             (equal (align (align x)) (align x))
+       ;             't)
+       ;         (if (equal (align (align (rotate x)))
+       ;                    (align (rotate x)))
+       ;             (equal (align (align x)) (align x))
+       ;             't)))
+
+       ; 80
+       ((A 1 1) (align x))
+       ((A 1 1) (if-nest-A (atom x)
+                           x
+                           (if (atom (car x))
+                               (cons (car x) (align (cdr x)))
+                               (align (rotate x)))))
+       ((A 2) (align x))
+       ((A 2) (if-nest-A (atom x)
+                         x
+                         (if (atom (car x))
+                             (cons (car x) (align (cdr x)))
+                             (align (rotate x)))))
+
+       ; 81
+       ((A 1) (align x))
+       ((A 1) (if-nest-A (atom x)
+                         x
+                         (if (atom (car x))
+                             (cons (car x) (align (cdr x)))
+                             (align (rotate x)))))
+       ((A) (equal-same x))
+
+       ; 82, 83
+       ((E A A 1 1) (align x))
+       ((E A A 1 1) (if-nest-E (atom x)
+                               x
+                               (if (atom (car x))
+                                   (cons (car x) (align (cdr x)))
+                                   (align (rotate x)))))
+       ((E A A 1 1) (if-nest-A (atom (car x))
+                               (cons (car x) (align (cdr x)))
+                               (align (rotate x))))
+       ((E A A 2) (align x))
+       ((E A A 2) (if-nest-E (atom x)
+                             x
+                             (if (atom (car x))
+                                 (cons (car x) (align (cdr x)))
+                                 (align (rotate x)))))
+       ((E A A 2) (if-nest-A (atom (car x))
+                             (cons (car x) (align (cdr x)))
+                             (align (rotate x))))
+
+       ; 84
+       ((E A A 1) (align (cons (car x) (align (cdr x)))))
+       ((E A A 1 Q) (atom/cons (car x) (align (cdr x))))
+       ((E A A 1 E Q 1) (car/cons (car x) (align (cdr x))))
+       ((E A A 1 E A 1) (car/cons (car x) (align (cdr x))))
+       ((E A A 1 E A 2 1) (cdr/cons (car x) (align (cdr x))))
+
+       ; 85
+       ((E A A 1) (if-false (cons (car x) (align (cdr x)))
+                            (if (atom (car x))
+                                (cons (car x) (align (align (cdr x))))
+                                (align (rotate (cons (car x) (align (cdr x))))))))
+       ((E A A 1) (if-nest-A (atom (car x))
+                             (cons (car x) (align (align (cdr x))))
+                             (align (rotate (cons (car x) (align (cdr x)))))))
+
+       ; 86
+       ((E A A 1 2) (equal-if (align (align (cdr x)))
+                              (align (cdr x))))
+       ((E A A) (equal-same (cons (car x) (align (cdr x)))))
+
+       ; 89
+       ((E A) (if-same (equal (align (align (cdr x))) (align (cdr x))) 't))
+
+       ; 90
+       ((E E A 1 1) (align x))
+       ((E E A 1 1) (if-nest-E (atom x)
+                               x
+                               (if (atom (car x))
+                                   (cons (car x) (align (cdr x)))
+                                   (align (rotate x)))))
+       ((E E A 1 1) (if-nest-E (atom (car x))
+                               (cons (car x) (align (cdr x)))
+                               (align (rotate x))))
+       ((E E A 2) (align x))
+       ((E E A 2) (if-nest-E (atom x)
+                             x
+                             (if (atom (car x))
+                                 (cons (car x) (align (cdr x)))
+                                 (align (rotate x)))))
+       ((E E A 2) (if-nest-E (atom (car x))
+                             (cons (car x) (align (cdr x)))
+                             (align (rotate x))))
+
+       ; 91
+       ((E E A 1) (equal-if (align (align (rotate x))) (align (rotate x))))
+
+       ; 92
+       ((E E A) (equal-same (align (rotate x))))
+       ((E E) (if-same (equal (align (align (rotate x))) (align (rotate x)))
+                       't))
+       ((E) (if-same (atom (car x)) 't))
+       (() (if-same (atom x) 't))))))
+
+(my/test/define 'dethm.align/align)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
+
 
