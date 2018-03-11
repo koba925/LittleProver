@@ -2261,10 +2261,22 @@
 
 (my/test/define 'dethm.align/align)
 
+(my/test
+ "dethm.align/align"
+ (J-Bob/prove (dethm.align/align)
+   '(((dethm smaller-same (x)
+        (if (natp x) (equal (< x x) 'nil) 't))
+      nil
+      ((A 1 1) (identity-+ x))
+      ((A 1 2) (identity-+ x))
+      ((A 1) (common-addends-< '0 '0 x))
+      ((A 1) (< '0 '0))
+      ((A) (equal-same 'nil))
+      (() (if-same (natp x) 't)))))
+ ''t)
+
 ;; テスト結果
 
 (my/test/result)
 
 ;; 作業エリア
-
-
